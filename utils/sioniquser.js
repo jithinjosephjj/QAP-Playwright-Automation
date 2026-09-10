@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const env = require('./env');
 
 /**
  * Sioniquser<N> iteration counter for the Employee -> User -> Smith chain.
@@ -11,11 +12,17 @@ const path = require('path');
  *   Sales Code  : RT<N>           (dynamic per iteration, Manual generation)
  *   Password    : 123 for every user
  *
- * The counter lives in sioniquser-counter.json at the project root and is
- * bumped ONLY by commit() after the whole chain succeeds, so a failed run
- * retries the same number instead of leaving gaps.
+ * The counter lives at the project root and is bumped ONLY by commit() after
+ * the whole chain succeeds, so a failed run retries the same number instead
+ * of leaving gaps. The counter is PER CLIENT (each client env has its own
+ * data, so iterations run independently): the qa client keeps the original
+ * sioniquser-counter.json, other clients get sioniquser-counter.<client>.json.
  */
-const COUNTER_FILE = path.join(__dirname, '..', 'sioniquser-counter.json');
+const COUNTER_FILE = path.join(
+  __dirname,
+  '..',
+  env.CLIENT === 'qa' ? 'sioniquser-counter.json' : `sioniquser-counter.${env.CLIENT}.json`
+);
 
 function currentN() {
   try {

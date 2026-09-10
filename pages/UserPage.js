@@ -1,4 +1,5 @@
 const { StockInwardBasePage } = require('./StockInwardBasePage');
+const env = require('../utils/env');
 
 /**
  * Users — Admin > Access Control > Users. Route: /adm/user-setup.
@@ -88,7 +89,7 @@ class UserPage extends StockInwardBasePage {
     await this.password.fill(u.password);
     await this.confirmPassword.fill(u.password);
 
-    await this.pick('selectedLocation', 'Cochin', { closePanel: true });
+    await this.pick('selectedLocation', env.BU, { closePanel: true });
     await this.pick('selectedUser', 'ERP User');
     await this.pick('selectedEmployee', u.displayName, { search: true });
 

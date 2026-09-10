@@ -1,9 +1,18 @@
 // @ts-check
 require('dotenv').config();
 const { defineConfig, devices } = require('@playwright/test');
+const env = require('./utils/env');
+
+// e2e transaction workflows are client-specific (masters are shared), so the
+// e2e folders of every client other than SIONIQ_CLIENT are excluded here.
+const otherClientE2e = env.OTHER_E2E_DIRS.map(
+  // Match both separators: Playwright compares against absolute paths.
+  (dir) => new RegExp(dir.replace('tests/', '') + String.raw`[\\/]`)
+);
 
 module.exports = defineConfig({
   testDir: './tests',
+  testIgnore: otherClientE2e,
   timeout: 60_000,
   expect: { timeout: 10_000 },
 
@@ -16,7 +25,7 @@ module.exports = defineConfig({
   retries: process.env.CI ? 1 : 0,
 
   use: {
-    baseURL: process.env.SIONIQ_URL || 'https://qa.sioniq.com',
+    baseURL: env.URL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -51,7 +60,7 @@ module.exports = defineConfig({
       use: { ...devices['Desktop Chrome'], viewport: null, deviceScaleFactor: undefined, storageState: { cookies: [], origins: [] } },
     },
 
-    // Logs in once and writes auth/admin-cochin.json
+    // Logs in once and writes the client's auth state file (env.AUTH_FILE)
     { name: 'setup', testMatch: /global\.setup\.js/ },
 
     {
@@ -62,7 +71,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         viewport: null, // maximized window (overrides the device's fixed viewport)
         deviceScaleFactor: undefined, // cannot coexist with a null viewport
-        storageState: 'auth/admin-cochin.json',
+        storageState: env.AUTH_FILE,
       },
     },
 

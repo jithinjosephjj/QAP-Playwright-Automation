@@ -1,4 +1,5 @@
 const { StockInwardBasePage } = require('./StockInwardBasePage');
+const env = require('../utils/env');
 
 /**
  * Counter — Inventory > Setup > Counter (Counter tab of /inv/counter-setup;
@@ -44,8 +45,8 @@ class CounterPage extends StockInwardBasePage {
   async fillLockerCounter(u) {
     await this.fillByLabel('Name', `${u.displayName} Locker`);
     await this.fillByLabel('Short Name', `u${u.n}`);
-    await this.pick('location', 'Cochin', { closePanel: true });
-    await this.pick('floor', 'Floor 4', { exact: true });
+    await this.pick('location', env.BU, { closePanel: true });
+    await this.pick('floor', env.MASTER.floor, { exact: true });
     await this.pick('masterDataValueID_CounterType', 'Locker', { exact: true });
 
     // Locker Details renders after the type pick, behind a transparent
@@ -60,7 +61,7 @@ class CounterPage extends StockInwardBasePage {
     // department is a MULTI select with a long, virtual-scrolled list -
     // type to filter so "Production" is actually rendered, and close the
     // panel afterwards.
-    await this.pick('department', 'Production', { exact: true, search: true, closePanel: true });
+    await this.pick('department', env.MASTER.department, { exact: true, search: true, closePanel: true });
     await this.selectAllOptions('lockerType');
   }
 
@@ -84,13 +85,13 @@ class CounterPage extends StockInwardBasePage {
    * Sub Counter stays empty.
    */
   async fillAssignment(u) {
-    await this.pick('locations', 'Cochin', { closePanel: true });
+    await this.pick('locations', env.BU, { closePanel: true });
     await this.pick('employees', u.displayName, { search: true });
     await this.pick('counters', `${u.displayName} Locker`, { search: true });
     await this.page.waitForTimeout(2_000); // let floor/type auto-fill
 
     if (!(await this.selectValue('floors'))) {
-      await this.pick('floors', 'Floor 4', { exact: true });
+      await this.pick('floors', env.MASTER.floor, { exact: true });
     }
     if (!(await this.selectValue('countertype'))) {
       await this.pick('countertype', 'Locker', { exact: true });

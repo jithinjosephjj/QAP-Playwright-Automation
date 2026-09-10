@@ -1,4 +1,5 @@
 const { StockInwardBasePage } = require('./StockInwardBasePage');
+const env = require('../utils/env');
 
 /**
  * Employee — HRMS > Setup > Employee. Route: /hrm/employee-setup.
@@ -50,14 +51,17 @@ class EmployeePage extends StockInwardBasePage {
     await this.pick('gender', 'Male');
     await this.fillDate(this.dob, '01/06/1996');
 
+    // Client-specific master data (legal entity, designation, level, process
+    // names differ per SIONIQ_CLIENT) comes from utils/env.js.
+    const m = env.MASTER;
     await this.pick('empIdGeneration', 'Auto');
-    await this.pick('legalEntity', 'Sioniq QA', { exact: true });
-    await this.pick('bUnit', 'Cochin', { search: true, closePanel: true });
-    await this.pick('department', 'Production', { exact: true });
-    await this.pick('designation', 'Supervisor');
-    await this.pick('designationlevel', 'L2');
-    await this.pick('process', 'Casting Process');
-    await this.pick('subprocess', 'Casting Inspection');
+    await this.pick('legalEntity', m.legalEntity, { exact: true });
+    await this.pick('bUnit', env.BU, { search: true, closePanel: true });
+    await this.pick('department', m.department, { exact: true });
+    await this.pick('designation', m.designation);
+    await this.pick('designationlevel', m.level);
+    await this.pick('process', m.process);
+    await this.pick('subprocess', m.subprocess);
 
     await this.pick('salesCodeGeneration', 'Manual');
     const salesCode = this.page

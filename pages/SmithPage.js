@@ -1,4 +1,5 @@
 const { StockInwardBasePage } = require('./StockInwardBasePage');
+const env = require('../utils/env');
 
 /**
  * Smith / Karigar — Production > Setup > Smith / Karigar.
@@ -34,9 +35,9 @@ class SmithPage extends StockInwardBasePage {
 
   /** Step 1 - Basic Information, in dependency order (all mandatory). */
   async fillBasicInformation(u) {
-    await this.pick('location', 'Cochin', { closePanel: true });
-    await this.pick('process', 'Casting Process'); // same as the employee's
-    await this.pick('subProcess', 'Casting Inspection'); // ditto
+    await this.pick('location', env.BU, { closePanel: true });
+    await this.pick('process', env.MASTER.process); // same as the employee's
+    await this.pick('subProcess', env.MASTER.subprocess); // ditto
     await this.pick('workerType', 'Inhouse Worker');
     await this.pick('employee', u.displayName, { search: true });
     await this.pick('category', 'Worker');
@@ -85,7 +86,7 @@ class SmithPage extends StockInwardBasePage {
           .filter((n) => n.offsetParent)
           .map((n) => n.getAttribute('controlname'))
           .find((c) => /zip|pin/i.test(c || '')));
-      if (zipCn) await this.pick(zipCn, '500016TS', { search: true });
+      if (zipCn) await this.pick(zipCn, env.MASTER.zip, { search: true });
     } catch {
       // optional step - never block the save on it
     }

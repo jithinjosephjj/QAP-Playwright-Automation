@@ -147,7 +147,7 @@ test.describe('Master add operations - Employee, User, Smith', () => {
     const response = await counterPage.submit();
     expect(response).toBeTruthy();
     expect(JSON.stringify(response)).toMatch(/success/i);
-    console.log(`Counter saved: "${counterName}" (Locker, Floor 4, Production, all locker types)`);
+    console.log(`Counter saved: "${counterName}" (Locker, client floor/department, all locker types)`);
 
     // the saved counter shows in the list view (data table on page load)
     await counterPage.verifyRowInList(counterName);
