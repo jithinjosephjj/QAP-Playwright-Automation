@@ -1,0 +1,26 @@
+﻿
+Running 1 test using 1 worker
+
+
+
+node.exe : (node:27448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:27448) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [no-auth] › tests\e2e\b2b-order-inhouse-production-workflow.noauth.spec.js:68:3 › B2B Order - Inhouse - Production - Workflow › TC-B2B-PRD-01 create the B2B job work order
+[no-auth] › tests\e2e\b2b-order-inhouse-production-workflow.noauth.spec.js:68:3 › B2B Order - Inhouse - Production - Workflow › TC-B2B-PRD-01 create the B2B job work order
+Add Files: image attached and dialog closed
+
+order submit fired: POST https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking | POST https://qa.sioniq.com/sioniq/PrintAndBarcodeBuilder/GetPrintTemplateByConfiguration
+
+order submit responses: [{"status":200,"url":"https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking","body":{"code":1001,"message":"Saved successfully!","data":{"orderBookingID":"85e8685d-3581-4531-8c6e-5734e4bd3526","receiptNo":"BB38","status":false}},"payload":"{\"status\":true,\"orderBookingID\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"receiptNo\":\"LI4DJJ\",\"receiptSerialNo\":329998,\"vendorBranchID\":\"3fa
+
+order submit diag: {"toast":"","invalidNg":["purposeType","customer","itemType","makingType","smcode","salesExecutive","deliveryNote","referenceType"]}
+
+B2B job work order created: BB38
+
+  1 passed (1.2m)

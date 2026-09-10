@@ -1,0 +1,48 @@
+﻿
+Running 4 tests using 1 worker
+
+
+
+node.exe : (node:21824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:21824) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:54:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-01 register the repair for the customer
+[no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:54:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-01 register the repair for the customer
+repair item added (form reset)
+
+repair save: 200 CreateRepairRegistration {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"65d0ec35-b7ef-4714-8e21-d9b1fbf7d4f4","transactionLineRefernceID":null,"receiptNo":"wJune-GGGG3d42026/2027-"}}
+
+print preview: template rendered (inline surface)
+
+Repair registered: wJune-GGGG3d42026/2027-
+
+[2/4] [no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:74:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-02 repair issue outsource (Procurement > Issue, Repair tab)
+[no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:74:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-02 repair issue outsource (Procurement > Issue, Repair tab)
+repair save: 200 CreateRepairIssue {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"97468d99-fa8f-47b6-9722-7a8f6dcd8f52","transactionLineRefernceID":null,"receiptNo":"wJune-FFFF3d42026/2027-"}}
+
+print preview: template rendered (inline surface)
+
+Repair issued outsource (doc: wJune-FFFF3d42026/2027-)
+
+[3/4] [no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:92:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-03 repair receipt (Repair page, Outsource + Invoice)
+[no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:92:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-03 repair receipt (Repair page, Outsource + Invoice)
+repair receipt: item committed via Add
+
+repair save: 200 CreateRepairReceipt {"code":1001,"message":"Saved successfully!","data":{"repairReceiptID":"c15ff47f-3f59-452e-943e-46ce905b101a","receiptNo":"wJune-dd45TestJune ","receiptSerialNo":45,"isExt":false}}
+
+Repair received back (doc: wJune-dd45TestJune )
+
+[4/4] [no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:108:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-04 repair delivery to the customer
+[no-auth] › tests\e2e\b2b-repair-outsource-workflow.noauth.spec.js:108:3 › B2B Repair - Outsource - Delivery - Workflow › TC-B2B-RPO-04 repair delivery to the customer
+repair save: 200 CreateRepairDelivery {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"ba4952b2-ffd1-4707-b0c5-db150c6d731f","transactionLineRefernceID":null,"receiptNo":"wJune-v28d42026/2027-"}}
+
+print preview: template rendered (inline surface)
+
+Repair delivered (doc: wJune-v28d42026/2027-)
+
+  4 passed (4.2m)

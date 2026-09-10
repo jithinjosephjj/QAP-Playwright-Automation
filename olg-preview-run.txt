@@ -1,0 +1,62 @@
+﻿
+Running 5 tests using 1 worker
+
+
+
+node.exe : (node:27240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:27240) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/5] [no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:53:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-01 create the stock order booking
+[no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:53:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-01 create the stock order booking
+Add Files: image attached and dialog closed
+
+order submit fired: POST https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking | POST https://qa.sioniq.com/sioniq/PrintAndBarcodeBuilder/GetPrintTemplateByConfiguration
+
+order submit responses: [{"status":200,"url":"https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking","body":{"code":1001,"message":"Saved successfully!","data":{"orderBookingID":"20aa81f7-a8f1-494a-9f6a-4c46a1b4d4c7","receiptNo":"wJune-hhh40d42026/2027-","status":false}},"payload":"{\"status\":true,\"orderBookingID\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"receiptNo\":\"1WU3LL\",\"receiptSerialNo\":279147,\"ven
+
+order submit diag: {"toast":"","invalidNg":["itemType","smcode","salesExecutive","deliveryNote","referenceType"]}
+
+Order booking created: wJune-hhh40d42026/2027-
+
+[2/5] [no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:96:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-02 issue the order as outsource job work (Procurement > Issue)
+[no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:96:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-02 issue the order as outsource job work (Procurement > Issue)
+outsource job work save: 200 {"code":1001,"message":"Saved successfully!","data":{"jobWorkID":"ef1792b7-1ef6-443b-b2de-8445d957170e","receiptNo":"PP89","receiptSerialNo":89,"masterDataValueID_JobWorkGenerationType":"95b59b31-a35c
+
+print preview: template rendered (inline surface)
+
+Outsource job work created: PP89
+
+[3/5] [no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:113:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-03 metal inward receives the goods back (jobwork return)
+[no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:113:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-03 metal inward receives the goods back (jobwork return)
+jobwork item PP89.001 auto-filled article: Gold,Ring-Tendulkar
+
+Metal inward saved: M167
+
+print preview: template rendered (inline surface)
+
+list view shows the saved record: M167
+
+[4/5] [no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:154:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-04 generate a lot from the inward
+[no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:154:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-04 generate a lot from the inward
+lot save: 200 {"code":1001,"message":"Saved successfully!","data":{"lotGenerationID":"2b154d52-9003-4d69-8eac-ad1122435feb","receiptNo":"NNN92"}}
+
+print preview: template rendered (inline surface)
+
+Lot generated: NNN92
+
+[5/5] [no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:172:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-05 generate barcode for the lot (as suja)
+[no-auth] › tests\e2e\order-outsource-lot-barcode-workflow.noauth.spec.js:172:3 › Order - Outsource - Lot - Barcode - Workflow › TC-OLG-05 generate barcode for the lot (as suja)
+barcode form: serial=NNN92-1, article=Gold,Ring-Tendulkar, entry=SINGLE TAG
+
+barcode tag save: 200 {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"a6e075db-b7ed-42b4-95c5-846fcb3e70ee","transactionLineRefernceID":"fe25321c-4d0f-4fe0-9fe1-5014d7752a52","receiptNo":"2026-06-2200020"}}
+
+Generated Tags row: 1 2026-06-2200020 Gold,Ring-Tendulkar Ring 22 Karat Gold SINGLE TAG 1 50.000 0.000 0.000 0.000 50.000 100,000.00 0.00 0.00 0.00 0.00 100,000.00 0.00 100,000.00 0.00 100,000.00
+
+Barcode tag generated: 2026-06-2200020
+
+  5 passed (4.6m)

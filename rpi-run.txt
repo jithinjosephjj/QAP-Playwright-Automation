@@ -1,0 +1,58 @@
+﻿
+Running 1 test using 1 worker
+
+
+
+node.exe : (node:1804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:1804) War... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [no-auth] › tests\e2e\tmp-rpi-receipt.noauth.spec.js:7:1 › TMP repair casting worker receipt (finalize, add, submit)
+[no-auth] › tests\e2e\tmp-rpi-receipt.noauth.spec.js:7:1 › TMP repair casting worker receipt (finalize, add, submit)
+workerReceipt: Production No -> d42026/2027-x270wJune-.1
+
+workerReceipt: finalize checkbox checked (/(Repair Finalize|Finalize Repair)/i)
+
+workerReceipt: item row added to the grid
+
+worker receipt save: 200 CreateRepairReceiptMode2 {"code":1001,"message":"Saved successfully!","data":{"productionProcessWorkerReceiptBatchID":"34839885-6cfb-4b80-ac50-5a3967fddab8","productionProcess
+
+Casting worker receipt done (no image)
+
+  1 passed (2.2m)
+
+Running 2 tests using 1 worker
+
+
+
+node.exe : (node:12868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:12868) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/2] [no-auth] › tests\e2e\b2b-repair-inhouse-production-workflow.noauth.spec.js:171:3 › B2B Repair - Inhouse - Production - Workflow › TC-B2B-RPI-07 repair receipt (Repair page, Inhouse)
+[no-auth] › tests\e2e\b2b-repair-inhouse-production-workflow.noauth.spec.js:171:3 › B2B Repair - Inhouse - Production - Workflow › TC-B2B-RPI-07 repair receipt (Repair page, Inhouse)
+repair receipt: grid row selected
+
+repair receipt: item committed via Add
+
+repair save: 200 CreateRepairReceipt {"code":1001,"message":"Saved successfully!","data":{"repairReceiptID":"1d32fcc4-aa06-4075-b602-8ab4236b44de","receiptNo":"wJune-dd52TestJune ","receiptSerialNo":52,"isExt":false}}
+
+Repair received back (doc: wJune-dd52TestJune )
+
+[2/2] [no-auth] › tests\e2e\b2b-repair-inhouse-production-workflow.noauth.spec.js:187:3 › B2B Repair - Inhouse - Production - Workflow › TC-B2B-RPI-08 repair delivery to the customer
+[no-auth] › tests\e2e\b2b-repair-inhouse-production-workflow.noauth.spec.js:187:3 › B2B Repair - Inhouse - Production - Workflow › TC-B2B-RPI-08 repair delivery to the customer
+repair save: 200 CreateRepairDelivery {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"8d1cb219-45e6-4c9e-8b30-216c5cb7e8a6","transactionLineRefernceID":null,"receiptNo":"wJune-v35d42026/2027-"}}
+
+print preview: template rendered (inline surface)
+
+Repair delivered (doc: wJune-v35d42026/2027-)
+
+  2 passed (2.2m)

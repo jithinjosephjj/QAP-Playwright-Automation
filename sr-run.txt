@@ -1,0 +1,58 @@
+﻿
+Running 5 tests using 1 worker
+
+
+
+node.exe : (node:9232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:9232) War... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/5] [no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:61:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-01 create the B2B order (no sample)
+[no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:61:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-01 create the B2B order (no sample)
+Add Files: image attached and dialog closed
+
+order submit fired: POST https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking | POST https://qa.sioniq.com/sioniq/PrintAndBarcodeBuilder/GetPrintTemplateByConfiguration
+
+order submit responses: [{"status":200,"url":"https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking","body":{"code":1001,"message":"Saved successfully!","data":{"orderBookingID":"5752e9a5-27f4-4016-a0dc-caef64e0c8aa","receiptNo":"BB53","status":false}},"payload":"{\"status\":true,\"orderBookingID\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"receiptNo\":\"IMW6ON\",\"receiptSerialNo\":257326,\"vendorBranchID\":\"3fa
+
+order submit diag: {"toast":"","invalidNg":["purposeType","customer","itemType","makingType","smcode","salesExecutive","deliveryNote","referenceType"]}
+
+B2B order created: BB53
+
+[2/5] [no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:109:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-02 register a sample against the order (Sample Registration)
+[no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:109:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-02 register a sample against the order (Sample Registration)
+Add Files: image attached and dialog closed
+
+registration panel: sample listed under Items Added
+
+sample save: 200 CreateSample {"code":1001,"message":"Saved successfully!","data":{"sampleID":"00000000-0000-0000-0000-000000000000","receiptNo":"2CT6H5","transactionRefernceID":"00000000-0000-0000-0000-000000000000"}}
+
+Sample registered against BB53: 2CT6H5
+
+[3/5] [no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:127:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-03 sample issue outsource (Procurement > Issue, Sample tab)
+[no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:127:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-03 sample issue outsource (Procurement > Issue, Sample tab)
+Add Files: image attached and dialog closed
+
+sample save: 200 CreateSample {"sampleIssueID":"16a89ddc-4e0b-40a0-af5f-25a5e2872e0f","masterDataValueID_JobWorkMode":"10102d1a-4609-4d33-8fac-4995ef5522f9","vendorID":"0e5704d4-f735-4a17-a398-831072ab207e","productionUnitID":null,"masterDataValueID_DeliveryMode":"7e94ada3-76f2-4
+
+Sample issued outsource (doc: keyed by sample no)
+
+[4/5] [no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:147:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-04 sample receipt (Repair page, Sample tab)
+[no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:147:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-04 sample receipt (Repair page, Sample tab)
+sample save: 200 CreateSampleReceipt {"code":1001,"message":"Saved successfully!","data":{"sampleReceiptID":"91827a9d-0def-4093-8237-c84ad6fa3565","transactionRefernceID":"91827a9d-0def-4093-8237-c84ad6fa3565","receiptNo":"wJune-29TestJune "}}
+
+Sample received back (doc: wJune-29TestJune )
+
+[5/5] [no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:163:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-05 sample delivery to the customer
+[no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js:163:3 › B2B Sample Registration - Outsource - Workflow › TC-B2B-SR-05 sample delivery to the customer
+sample save: 200 CreateSampleDelivery {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"3213eae3-cdd5-4c1c-9315-95c2cc139010","transactionLineRefernceID":null,"receiptNo":"wJune-f16wJune-"}}
+
+Sample delivered (doc: wJune-f16wJune-)
+
+  Slow test file: [no-auth] › tests\e2e\b2b-sample-registration-outsource-workflow.noauth.spec.js (5.0m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  5 passed (5.1m)

@@ -1,0 +1,78 @@
+﻿
+Running 9 tests using 1 worker
+
+
+
+node.exe : (node:21768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:21768) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:62:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-01 create the B2B order (no sample)
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:62:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-01 create the B2B order (no sample)
+Add Files: image attached and dialog closed
+
+order submit fired: POST https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking | POST https://qa.sioniq.com/sioniq/PrintAndBarcodeBuilder/GetPrintTemplateByConfiguration
+
+order submit responses: [{"status":200,"url":"https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking","body":{"code":1001,"message":"Saved successfully!","data":{"orderBookingID":"2b06db03-9b79-49ec-a9ec-11ac87b59473","receiptNo":"BB58","status":false}},"payload":"{\"status\":true,\"orderBookingID\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"receiptNo\":\"C5CIOT\",\"receiptSerialNo\":504305,\"vendorBranchID\":\"3fa
+
+order submit diag: {"toast":"","invalidNg":["purposeType","customer","itemType","makingType","smcode","salesExecutive","deliveryNote","referenceType"]}
+
+B2B order created: BB58
+
+[2/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:110:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-02 register a sample against the order
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:110:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-02 register a sample against the order
+Add Files: image attached and dialog closed
+
+registration panel: sample listed under Items Added
+
+sample save: 200 CreateSample {"code":1001,"message":"Saved successfully!","data":{"sampleID":"00000000-0000-0000-0000-000000000000","receiptNo":"ESDLAI","transactionRefernceID":"00000000-0000-0000-0000-000000000000"}}
+
+Sample registered against BB58: ESDLAI
+
+[3/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:128:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-03 sample issue inhouse (Procurement > Issue, Sample tab)
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:128:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-03 sample issue inhouse (Procurement > Issue, Sample tab)
+Add Files: image attached and dialog closed
+
+sample save: 200 CreateSample {"sampleIssueID":"134bfc7a-616e-4934-a1af-dd8872217b92","masterDataValueID_JobWorkMode":"4874526e-032a-406d-a2f2-30b4481cd261","vendorID":null,"productionUnitID":"594cdc3a-7c9b-4ce8-8828-e3289d4abba5","masterDataValueID_DeliveryMode":"7e94ada3-76f2-4
+
+Sample issued inhouse (doc: keyed by sample no)
+
+[4/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:148:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-04 assign the sample job to Design And CAD / CAD Modeling
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:148:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-04 assign the sample job to Design And CAD / CAD Modeling
+job assignment save: 200 {"code":1001,"message":"{0} Saved Successfully!","data":[{"transactionRefernceID":"73220efb-2d57-4397-9bc5-785769d9f56e","transactionLineRefernceID":null,"receiptNo":"d42026/2027-x255wJune-"}]}
+
+Sample job assigned to Design And CAD / CAD Modeling
+
+[5/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:163:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-05 process movement accept (Design And CAD)
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:163:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-05 process movement accept (Design And CAD)
+Process movement accepted at Design And CAD
+
+[6/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:175:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-06 worker issue and receipt (CAD Modeling, Prabhat)
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:175:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-06 worker issue and receipt (CAD Modeling, Prabhat)
+Worker issue + receipt (CAD) done
+
+[7/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:184:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-07 transfer to Casting, accept, worker issue and receipt (Sioniquser11)
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:184:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-07 transfer to Casting, accept, worker issue and receipt (Sioniquser11)
+workerReceipt: Finalize Sample checked
+
+Transferred to Casting, accepted, worker issue + receipt (finalized) done
+
+[8/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:210:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-08 sample receipt (Repair page, Sample tab, inhouse)
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:210:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-08 sample receipt (Repair page, Sample tab, inhouse)
+sample save: 200 CreateSampleReceipt {"code":1001,"message":"Saved successfully!","data":{"sampleReceiptID":"001ef0ec-b30c-4f6e-bbdc-8cd3eb176ba0","transactionRefernceID":"001ef0ec-b30c-4f6e-bbdc-8cd3eb176ba0","receiptNo":"wJune-32TestJune "}}
+
+Sample received back (doc: wJune-32TestJune )
+
+[9/9] [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:226:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-09 sample delivery to the customer
+[no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js:226:3 › B2B Sample Registration - Inhouse - Production - Workflow › TC-B2B-SRI-09 sample delivery to the customer
+sample save: 200 CreateSampleDelivery {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"bfea899d-c968-4aab-90d5-2ee19924747e","transactionLineRefernceID":null,"receiptNo":"wJune-f19wJune-"}}
+
+Sample delivered (doc: wJune-f19wJune-)
+
+  Slow test file: [no-auth] › tests\e2e\b2b-sample-registration-inhouse-production-workflow.noauth.spec.js (11.4m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  9 passed (11.6m)

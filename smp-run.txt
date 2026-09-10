@@ -1,0 +1,76 @@
+﻿
+Running 8 tests using 1 worker
+
+
+
+node.exe : (node:26212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:26212) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:64:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-01 create the B2B order with a sample
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:64:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-01 create the B2B order with a sample
+Add Files: image attached and dialog closed
+
+Add Files: image attached and dialog closed
+
+Add Sample panel: sample listed under Items Added
+
+order submit fired: POST https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking | POST https://qa.sioniq.com/sioniq/PrintAndBarcodeBuilder/GetPrintTemplateByConfiguration
+
+order submit responses: [{"status":200,"url":"https://qa.sioniq.com/sioniq/OrderBooking/CreateOrderBooking","body":{"code":1001,"message":"Saved successfully!","data":{"orderBookingID":"a122b7f9-2bbc-43bc-843f-d0f676e21f74","receiptNo":"BB60","status":false}},"payload":"{\"status\":true,\"orderBookingID\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"receiptNo\":\"ZIS3UT\",\"receiptSerialNo\":522383,\"vendorBranchID\":\"3fa
+
+order submit diag: {"toast":"","invalidNg":["purposeType","customer","itemType","makingType","smcode","salesExecutive","deliveryNote","referenceType"]}
+
+B2B sample order created: BB60
+
+latest sample no: SN09KR (row: 1 SN09KR B2B Order Metal 12 12 0)
+
+Sample registered as: SN09KR
+
+[2/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:121:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-02 sample issue inhouse (Procurement > Issue, Sample tab)
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:121:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-02 sample issue inhouse (Procurement > Issue, Sample tab)
+Add Files: image attached and dialog closed
+
+sample save: 200 CreateSample {"sampleIssueID":"0e008f53-ceed-4738-b1c0-b00395605100","masterDataValueID_JobWorkMode":"4874526e-032a-406d-a2f2-30b4481cd261","vendorID":null,"productionUnitID":"594cdc3a-7c9b-4ce8-8828-e3289d4abba5","masterDataValueID_DeliveryMode":"7e94ada3-76f2-4
+
+Sample issued inhouse (doc: keyed by sample no)
+
+[3/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:141:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-03 assign the sample job to Design And CAD / CAD Modeling
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:141:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-03 assign the sample job to Design And CAD / CAD Modeling
+job assignment save: 200 {"code":1001,"message":"{0} Saved Successfully!","data":[{"transactionRefernceID":"f2e9e2e0-3610-4cf8-be0b-d87a55df668c","transactionLineRefernceID":null,"receiptNo":"d42026/2027-x256wJune-"}]}
+
+Sample job assigned to Design And CAD / CAD Modeling
+
+[4/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:156:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-04 process movement accept (Design And CAD)
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:156:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-04 process movement accept (Design And CAD)
+Process movement accepted at Design And CAD
+
+[5/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:168:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-05 worker issue and receipt (CAD Modeling, Prabhat)
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:168:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-05 worker issue and receipt (CAD Modeling, Prabhat)
+Worker issue + receipt (CAD) done
+
+[6/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:177:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-06 transfer to Casting, accept, worker issue and receipt (Sioniquser11)
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:177:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-06 transfer to Casting, accept, worker issue and receipt (Sioniquser11)
+workerReceipt: Finalize Sample checked
+
+Transferred to Casting, accepted, worker issue + receipt (finalized) done
+
+[7/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:203:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-07 sample receipt (Repair page, Sample tab, inhouse)
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:203:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-07 sample receipt (Repair page, Sample tab, inhouse)
+sample save: 200 CreateSampleReceipt {"code":1001,"message":"Saved successfully!","data":{"sampleReceiptID":"539b291c-0bdf-4af2-bff5-cf74759e4945","transactionRefernceID":"539b291c-0bdf-4af2-bff5-cf74759e4945","receiptNo":"wJune-33TestJune "}}
+
+Sample received back (doc: wJune-33TestJune )
+
+[8/8] [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:219:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-08 sample delivery to the customer
+[no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js:219:3 › B2B Sample - Inhouse - Production - Workflow › TC-B2B-SMP-08 sample delivery to the customer
+sample save: 200 CreateSampleDelivery {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"4a8ad366-d761-4ba3-ab89-8c38435f7345","transactionLineRefernceID":null,"receiptNo":"wJune-f20wJune-"}}
+
+Sample delivered (doc: wJune-f20wJune-)
+
+  Slow test file: [no-auth] › tests\e2e\b2b-sample-inhouse-workflow.noauth.spec.js (9.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  8 passed (9.2m)

@@ -1,0 +1,32 @@
+﻿
+Running 3 tests using 1 worker
+
+
+
+node.exe : (node:2236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:2236) War... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/3] [no-auth] › tests\e2e\b2b-sample-outsource-delivery-workflow.noauth.spec.js:126:3 › B2B Sample - Outsource - Delivery - Workflow › TC-B2B-SD-02 sample issue outsource (Procurement > Issue, Sample tab)
+[no-auth] › tests\e2e\b2b-sample-outsource-delivery-workflow.noauth.spec.js:126:3 › B2B Sample - Outsource - Delivery - Workflow › TC-B2B-SD-02 sample issue outsource (Procurement > Issue, Sample tab)
+sample save: 200 CreateSample {"sampleIssueID":"b3ad66b1-a5c0-446a-9913-d10a561db3e1","masterDataValueID_JobWorkMode":"10102d1a-4609-4d33-8fac-4995ef5522f9","vendorID":"0e5704d4-f735-4a17-a398-831072ab207e","productionUnitID":null,"masterDataValueID_DeliveryMode":"7e94ada3-76f2-4
+
+Sample issued outsource (doc: keyed by order no)
+
+[2/3] [no-auth] › tests\e2e\b2b-sample-outsource-delivery-workflow.noauth.spec.js:146:3 › B2B Sample - Outsource - Delivery - Workflow › TC-B2B-SD-03 sample receipt (Repair page, Sample tab)
+[no-auth] › tests\e2e\b2b-sample-outsource-delivery-workflow.noauth.spec.js:146:3 › B2B Sample - Outsource - Delivery - Workflow › TC-B2B-SD-03 sample receipt (Repair page, Sample tab)
+sample save: 200 CreateSampleReceipt {"code":1001,"message":"Saved successfully!","data":{"sampleReceiptID":"95c17acf-55da-49e7-8605-e967c307de9a","transactionRefernceID":"95c17acf-55da-49e7-8605-e967c307de9a","receiptNo":"wJune-24TestJune "}}
+
+Sample received back (doc: wJune-24TestJune )
+
+[3/3] [no-auth] › tests\e2e\b2b-sample-outsource-delivery-workflow.noauth.spec.js:162:3 › B2B Sample - Outsource - Delivery - Workflow › TC-B2B-SD-04 sample delivery to the customer
+[no-auth] › tests\e2e\b2b-sample-outsource-delivery-workflow.noauth.spec.js:162:3 › B2B Sample - Outsource - Delivery - Workflow › TC-B2B-SD-04 sample delivery to the customer
+sample save: 200 CreateSampleDelivery {"code":1001,"message":"Saved successfully!","data":{"transactionRefernceID":"c4f3abd9-8fd7-41d4-ba32-726430914cb4","transactionLineRefernceID":null,"receiptNo":"wJune-f11wJune-"}}
+
+Sample delivered (doc: wJune-f11wJune-)
+
+  3 passed (3.2m)

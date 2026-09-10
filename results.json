@@ -1,0 +1,354 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/masters/master-add-operations.noauth.spec.js",
+      "--headed"
+    ],
+    "configFile": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\playwright.config.js",
+    "rootDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "no-auth",
+        "name": "no-auth",
+        "testDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/tests",
+        "testIgnore": [
+          "/e2e[\\\\/]/"
+        ],
+        "testMatch": [
+          "/.*\\.noauth\\.spec\\.js/"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/tests",
+        "testIgnore": [
+          "/e2e[\\\\/]/"
+        ],
+        "testMatch": [
+          "/global\\.setup\\.js/"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/tests",
+        "testIgnore": [
+          "/.*\\.noauth\\.spec\\.js/"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "masters\\master-add-operations.noauth.spec.js",
+      "file": "masters/master-add-operations.noauth.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Master add operations - Employee, User, Smith",
+          "file": "masters/master-add-operations.noauth.spec.js",
+          "line": 40,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-EMP-001 create employee Sioniquser<N>",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17241,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Iteration 1: employee \"Sioniquser1\", sales code RT1\n"
+                        },
+                        {
+                          "text": "Employee Sioniquser1 already exists - nothing to create\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T07:56:13.881Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1610ba9b94c209cc92df-ac6768b6a1646393f17c",
+              "file": "masters/master-add-operations.noauth.spec.js",
+              "line": 42,
+              "column": 3
+            },
+            {
+              "title": "TC-USR-001 create user Sioniquser<N> mapped to its employee",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13809,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Iteration 1: user name \"Sioniquserone\", login \"Sioniquser1\"\n"
+                        },
+                        {
+                          "text": "User Sioniquser1 already exists - nothing to create\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T07:56:32.924Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1610ba9b94c209cc92df-e1f37edc3e77a716f438",
+              "file": "masters/master-add-operations.noauth.spec.js",
+              "line": 65,
+              "column": 3
+            },
+            {
+              "title": "TC-SMH-001 create smith mapped to employee Sioniquser<N>",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12389,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Iteration 1: smith for employee \"Sioniquser1\", code SM1, short name u1\n"
+                        },
+                        {
+                          "text": "Smith for Sioniquser1 already exists - nothing to create\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T07:56:46.786Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1610ba9b94c209cc92df-9737de1f925197ee7455",
+              "file": "masters/master-add-operations.noauth.spec.js",
+              "line": 96,
+              "column": 3
+            },
+            {
+              "title": "TC-CNT-001 create locker counter for employee Sioniquser<N>",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 35093,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Iteration 1: counter \"Sioniquser1 Locker\", short name u1\n"
+                        },
+                        {
+                          "text": "Counter saved: \"Sioniquser1 Locker\" (Locker, Floor 4, Production, all locker types)\n"
+                        },
+                        {
+                          "text": "list view shows the saved record: Sioniquser1 Locker\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T07:56:59.393Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1610ba9b94c209cc92df-7fde25cf68aa17969c35",
+              "file": "masters/master-add-operations.noauth.spec.js",
+              "line": 129,
+              "column": 3
+            },
+            {
+              "title": "TC-ELC-001 map locker counter to employee Sioniquser<N>",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 38425,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Iteration 1: assign \"Sioniquser1 Locker\" to employee \"Sioniquser1\"\n"
+                        },
+                        {
+                          "text": "Assignment saved: Sioniquser1 -> \"Sioniquser1 Locker\"\n"
+                        },
+                        {
+                          "text": "list view shows the saved record: Sioniquser1\n"
+                        },
+                        {
+                          "text": "Iteration 1 complete; next run will use Sioniquser2\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T07:57:34.568Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1610ba9b94c209cc92df-717ea9815df7df3cd7a5",
+              "file": "masters/master-add-operations.noauth.spec.js",
+              "line": 157,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-09T07:56:12.807Z",
+    "duration": 130803.49399999999,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
