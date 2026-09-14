@@ -4,8 +4,9 @@
       "C:\\Program Files\\nodejs\\node.exe",
       "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "tests/masters/master-add-operations.noauth.spec.js",
-      "--headed"
+      "tests/crm",
+      "--headed",
+      "project=chromium"
     ],
     "configFile": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\playwright.config.js",
     "rootDir": "D:/OneDrive - Sioniq Tech Private Limited/QAP Automation/Playwright Automation/tests",
@@ -111,21 +112,21 @@
   },
   "suites": [
     {
-      "title": "masters\\master-add-operations.noauth.spec.js",
-      "file": "masters/master-add-operations.noauth.spec.js",
+      "title": "crm\\customer-registration-add.noauth.spec.js",
+      "file": "crm/customer-registration-add.noauth.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Master add operations - Employee, User, Smith",
-          "file": "masters/master-add-operations.noauth.spec.js",
-          "line": 40,
+          "title": "Customer Registration - add record",
+          "file": "crm/customer-registration-add.noauth.spec.js",
+          "line": 34,
           "column": 6,
           "specs": [
             {
-              "title": "TC-EMP-001 create employee Sioniquser<N>",
-              "ok": true,
+              "title": "TC-CRM-CUST-01 add an Individual customer",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -138,203 +139,68 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 17241,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Iteration 1: employee \"Sioniquser1\", sales code RT1\n"
+                      "status": "failed",
+                      "duration": 117064,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ng-dropdown-panel .ng-option').filter({ hasText: 'Aadhar Card' }).first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ng-dropdown-panel .ng-option').filter({ hasText: 'Aadhar Card' }).first()\u001b[22m\n\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:134:106\n    at CustomerRegistrationPage.pickDocType (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:132:5)\n    at CustomerRegistrationPage.fillCustomer (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:73:7)\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\crm\\customer-registration-add.noauth.spec.js:51:5",
+                        "location": {
+                          "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js",
+                          "column": 106,
+                          "line": 134
                         },
+                        "snippet": "\u001b[90m   at \u001b[39m..\\pages\\CustomerRegistrationPage.js:134\n\n\u001b[0m \u001b[90m 132 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpick(\u001b[32m'documentTypeID'\u001b[39m\u001b[33m,\u001b[39m type)\n \u001b[90m 133 |\u001b[39m       \u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'#kyc-doctype-select .ng-select-container'\u001b[39m)\u001b[33m.\u001b[39mclick()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 134 |\u001b[39m         \u001b[33m.\u001b[39mthen(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'.ng-dropdown-panel .ng-option'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m type })\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mclick()))\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 135 |\u001b[39m   }\n \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m   \u001b[90m/** Pick an address select by value; fall back to its first real option. */\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
                         {
-                          "text": "Employee Sioniquser1 already exists - nothing to create\n"
+                          "location": {
+                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js",
+                            "column": 106,
+                            "line": 134
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ng-dropdown-panel .ng-option').filter({ hasText: 'Aadhar Card' }).first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39m..\\pages\\CustomerRegistrationPage.js:134\n\n\u001b[0m \u001b[90m 132 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpick(\u001b[32m'documentTypeID'\u001b[39m\u001b[33m,\u001b[39m type)\n \u001b[90m 133 |\u001b[39m       \u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'#kyc-doctype-select .ng-select-container'\u001b[39m)\u001b[33m.\u001b[39mclick()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 134 |\u001b[39m         \u001b[33m.\u001b[39mthen(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'.ng-dropdown-panel .ng-option'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m type })\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mclick()))\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 135 |\u001b[39m   }\n \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m   \u001b[90m/** Pick an address select by value; fall back to its first real option. */\u001b[39m\u001b[0m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:134:106\u001b[22m\n\u001b[2m    at CustomerRegistrationPage.pickDocType (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:132:5)\u001b[22m\n\u001b[2m    at CustomerRegistrationPage.fillCustomer (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:73:7)\u001b[22m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\crm\\customer-registration-add.noauth.spec.js:51:5\u001b[22m"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-09-09T07:56:13.881Z",
+                      "startTime": "2026-09-14T04:49:25.363Z",
                       "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "1610ba9b94c209cc92df-ac6768b6a1646393f17c",
-              "file": "masters/master-add-operations.noauth.spec.js",
-              "line": 42,
-              "column": 3
-            },
-            {
-              "title": "TC-USR-001 create user Sioniquser<N> mapped to its employee",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 420000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "no-auth",
-                  "projectName": "no-auth",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 13809,
-                      "errors": [],
-                      "stdout": [
+                      "attachments": [
                         {
-                          "text": "Iteration 1: user name \"Sioniquserone\", login \"Sioniquser1\"\n"
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\test-failed-1.png"
                         },
                         {
-                          "text": "User Sioniquser1 already exists - nothing to create\n"
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\trace.zip"
                         }
                       ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-09-09T07:56:32.924Z",
-                      "annotations": [],
-                      "attachments": []
+                      "errorLocation": {
+                        "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js",
+                        "column": 106,
+                        "line": 134
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "1610ba9b94c209cc92df-e1f37edc3e77a716f438",
-              "file": "masters/master-add-operations.noauth.spec.js",
-              "line": 65,
-              "column": 3
-            },
-            {
-              "title": "TC-SMH-001 create smith mapped to employee Sioniquser<N>",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 420000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "no-auth",
-                  "projectName": "no-auth",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 12389,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Iteration 1: smith for employee \"Sioniquser1\", code SM1, short name u1\n"
-                        },
-                        {
-                          "text": "Smith for Sioniquser1 already exists - nothing to create\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-09-09T07:56:46.786Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "1610ba9b94c209cc92df-9737de1f925197ee7455",
-              "file": "masters/master-add-operations.noauth.spec.js",
-              "line": 96,
-              "column": 3
-            },
-            {
-              "title": "TC-CNT-001 create locker counter for employee Sioniquser<N>",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 420000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "no-auth",
-                  "projectName": "no-auth",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 35093,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Iteration 1: counter \"Sioniquser1 Locker\", short name u1\n"
-                        },
-                        {
-                          "text": "Counter saved: \"Sioniquser1 Locker\" (Locker, Floor 4, Production, all locker types)\n"
-                        },
-                        {
-                          "text": "list view shows the saved record: Sioniquser1 Locker\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-09-09T07:56:59.393Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "1610ba9b94c209cc92df-7fde25cf68aa17969c35",
-              "file": "masters/master-add-operations.noauth.spec.js",
-              "line": 129,
-              "column": 3
-            },
-            {
-              "title": "TC-ELC-001 map locker counter to employee Sioniquser<N>",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 420000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "no-auth",
-                  "projectName": "no-auth",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 38425,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Iteration 1: assign \"Sioniquser1 Locker\" to employee \"Sioniquser1\"\n"
-                        },
-                        {
-                          "text": "Assignment saved: Sioniquser1 -> \"Sioniquser1 Locker\"\n"
-                        },
-                        {
-                          "text": "list view shows the saved record: Sioniquser1\n"
-                        },
-                        {
-                          "text": "Iteration 1 complete; next run will use Sioniquser2\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-09-09T07:57:34.568Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "1610ba9b94c209cc92df-717ea9815df7df3cd7a5",
-              "file": "masters/master-add-operations.noauth.spec.js",
-              "line": 157,
+              "id": "758957890814a3530cc9-66ddddd0b562833c018d",
+              "file": "crm/customer-registration-add.noauth.spec.js",
+              "line": 35,
               "column": 3
             }
           ]
@@ -344,11 +210,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-09T07:56:12.807Z",
-    "duration": 130803.49399999999,
-    "expected": 5,
+    "startTime": "2026-09-14T04:49:24.492Z",
+    "duration": 124587.687,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }
