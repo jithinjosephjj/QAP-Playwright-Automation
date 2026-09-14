@@ -66,8 +66,11 @@ class TransfersPage extends StockInwardBasePage {
     await this.pickByLabelText('Transaction Mode', new RegExp(`^\\s*${transactionMode}\\s*$`));
     await this.pickByLabelText('Item Type', new RegExp(`^\\s*${itemType}\\s*$`));
     await this.pickByLabelText('Group Category', new RegExp(`^\\s*${groupCategory}\\s*$`));
-    await this.pickByLabelText('From Process', new RegExp(fromProcess));
-    await this.pickByLabelText('From Transaction Type', new RegExp(fromTransactionType));
+    // From Process / From Transaction Type only exist when the source stock is in
+    // a process (e.g. an HO issuing Lot-process stock). A branch transferring
+    // plain received stock has neither - pass them only when applicable.
+    if (fromProcess) await this.pickByLabelText('From Process', new RegExp(fromProcess)).catch(() => {});
+    if (fromTransactionType) await this.pickByLabelText('From Transaction Type', new RegExp(fromTransactionType)).catch(() => {});
     // Scan Type defaults to Tag Number; enforce it if a picker is present
     await this.pickByLabelText('Scan Type', /Tag Number/).catch(() => {});
     await this.waitForIdle();
