@@ -58,7 +58,7 @@ class BarcodeGenerationPage extends StockInwardBasePage {
    * Generate a barcode tag from a lot. Returns the generated tag number.
    * @param {string} [lotNo] specific Lot No to consume; falls back to the latest.
    */
-  async generate({ itemType = 'Metal', vendor = 'Celestia Jewels P', lotNo, groupCategory = 'Gold', grossWeight = 10 } = {}) {
+  async generate({ itemType = 'Metal', vendor = 'Celestia Jewels P', lotNo, groupCategory = 'Gold', brand, amount, grossWeight = 10 } = {}) {
     await this.open();
     await this.addBtn.click({ timeout: 30_000 });
     await this.select('masterDataValueID_JewelleryItemType').waitFor({ state: 'visible', timeout: 30_000 });
@@ -80,6 +80,9 @@ class BarcodeGenerationPage extends StockInwardBasePage {
     const serial = await this.pickFirst('lotGenerationMetalID');
     console.log(`barcode: lot=${target} serial=${serial}`);
 
+    // Brand tags carry a mandatory Brand Name (productBrandID)
+    if (brand) await this.pick('productBrandID', brand, { search: true }).catch(() => this.pick('productBrandID', brand, { exact: true }).catch(() => {}));
+
     // article cascade - fill only what's still empty (lot may pre-fill some)
     const emptyOf = async (cn) => !(await this.select(cn).locator('.ng-value').first().isVisible({ timeout: 800 }).catch(() => false));
     if (await emptyOf('metalID')) await this.pick('metalID', groupCategory, { exact: true }).catch(() => {});
@@ -89,32 +92,46 @@ class BarcodeGenerationPage extends StockInwardBasePage {
     await this.pickFirst('masterDataValueID_VendorMakingType').catch(() => {});
     await this.pickFirst('masterDataValueID_VendorMakingOn').catch(() => {});
 
-    // gross weight component
-    const gw = this.page.locator('form').filter({ hasText: /Gross Weight Component/i }).locator('input[type="decimal"]').first();
-    if (await gw.isVisible({ timeout: 4_000 }).catch(() => false)) { await gw.click(); await gw.fill(String(grossWeight)); await this.page.keyboard.press('Tab'); }
+    // gross weight - Metal uses a "Gross Weight Component" decimal cell; Brand
+    // uses a plain "Gross Weight" input and additionally a mandatory Amount.
+    if (brand) {
+      await this.fillByLabel('Gross Weight', grossWeight).catch(() => {});
+      if (amount !== undefined) await this.fillByLabel('Amount', amount).catch(() => {});
+    } else {
+      const gw = this.page.locator('form').filter({ hasText: /Gross Weight Component/i }).locator('input[type="decimal"]').first();
+      if (await gw.isVisible({ timeout: 4_000 }).catch(() => false)) { await gw.click(); await gw.fill(String(grossWeight)); await this.page.keyboard.press('Tab'); }
+    }
     await this.page.waitForTimeout(1_000);
 
+    // Match the barcode SAVE (CreateBarcodeGeneration), never the pre-submit tax
+    // preview (GenerateTax, which for Brand fires first and returns 200).
     const resp = this.page.waitForResponse(
-      (r) => r.request().method() === 'POST' && /Barcode|GenerateTag|CreateTag/i.test(r.url()) && !/GetAll|Pagination|KeepAlive|List|Search|Master|Template/i.test(r.url()),
+      (r) => r.request().method() === 'POST' && /Barcode|CreateTag|GenerateTag/i.test(r.url()) && !/Tax|GetAll|Pagination|KeepAlive|List|Search|Master|Template|Translation|GetLocation/i.test(r.url()),
       { timeout: 60_000 },
     ).catch(() => null);
     const submit = this.page.locator('button').filter({ hasText: /^\s*Submit\s*$/ }).locator('visible=true').last();
     await submit.scrollIntoViewIfNeeded().catch(() => {});
     await submit.click({ timeout: 15_000, force: true });
+    // Brand: the first Submit only computes tax (GenerateTax); once the tax
+    // fields populate, a second Submit actually saves the tag.
+    if (brand) {
+      await this.page.waitForResponse((r) => /GenerateTax/i.test(r.url()) && r.request().method() === 'POST', { timeout: 30_000 }).catch(() => {});
+      await this.page.waitForTimeout(1_500);
+      await submit.click({ timeout: 15_000, force: true }).catch(() => {});
+    }
     await this.page.waitForTimeout(1_500);
-    const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm/i }).getByRole('button', { name: /Yes|Ok|Confirm|Submit/i }).locator('visible=true').last();
-    if (await confirm.isVisible({ timeout: 3_000 }).catch(() => false)) await confirm.click().catch(() => {});
+    const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm|proceed|generate/i }).getByRole('button', { name: /Yes|Ok|Confirm|Submit|Proceed|Generate/i }).locator('visible=true').last();
+    if (await confirm.isVisible({ timeout: 3_000 }).catch(() => false)) { await confirm.click().catch(() => {}); console.log('barcode: confirmed dialog'); }
     const r = await resp;
     if (!r) throw new Error(`Barcode Submit fired no save - invalid: ${JSON.stringify(await this.invalidControls())}`);
     const body = await r.json().catch(() => null);
     console.log('barcode save:', r.status(), r.url().split('/').slice(-1)[0], JSON.stringify(body).slice(0, 400));
     if (r.status() >= 400 || (body && body.errorCode)) throw new Error(`Barcode save rejected (HTTP ${r.status()}): ${body ? body.error || body.message || '' : ''}`);
 
-    // extract the generated tag: from body, else from the page (dd/mm/nnnnnnn)
-    let tag = '';
-    const bstr = JSON.stringify(body || {});
-    const m = bstr.match(/\d{2}\/\d{2}\/\d{6,7}/);
-    if (m) tag = m[0];
+    // the generated tag IS the save receiptNo (Metal: "26/01/0100012";
+    // Brand: alphanumeric like "CBJ00002SB"). Fall back to a page scan.
+    let tag = (body && body.data && (body.data.receiptNo || body.data.tagNo || body.data.barcodeNo)) || '';
+    if (!tag) { const m = JSON.stringify(body || {}).match(/\d{2}\/\d{2}\/\d{6,7}/); if (m) tag = m[0]; }
     if (!tag) { await this.page.waitForTimeout(1_500); tag = await this.page.evaluate(() => { const mm = document.body.innerText.match(/\d{2}\/\d{2}\/\d{6,7}/); return mm ? mm[0] : ''; }); }
     await this.page.locator('.btn-close').last().click({ timeout: 8_000 }).catch(() => {});
     return tag;

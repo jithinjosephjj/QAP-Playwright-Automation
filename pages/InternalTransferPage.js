@@ -105,13 +105,14 @@ class InternalTransferPage extends StockInwardBasePage {
     await row.waitFor({ state: 'visible', timeout: 30_000 });
     const box = row.getByRole('checkbox').first();
     if (!(await box.isChecked().catch(() => false))) await box.check({ force: true });
-    // an item dialog ("Metal Transfer" / "<entity> Transfer") opens - Add it
+    // an item dialog ("Metal Transfer" / "Brand Transfer" / "<entity> Transfer")
+    // opens - confirm it. Metal's button is "Add"; Brand's is "Save".
     const dlg = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Transfer/i }).last();
     if (await dlg.isVisible({ timeout: 8_000 }).catch(() => false)) {
-      await dlg.getByRole('button', { name: /^\s*Add\s*$/ }).last().click({ timeout: 8_000 }).catch(() => {});
+      await dlg.getByRole('button', { name: /^\s*(Add|Save)\s*$/ }).last().click({ timeout: 8_000 }).catch(() => {});
       await dlg.waitFor({ state: 'hidden', timeout: 15_000 }).catch(() => {});
       await this.page.waitForTimeout(1_500);
-      console.log('internal transfer: item added via dialog');
+      console.log('internal transfer: item confirmed via dialog');
     }
   }
 
