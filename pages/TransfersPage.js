@@ -48,7 +48,9 @@ class TransfersPage extends StockInwardBasePage {
     await this.page.waitForTimeout(700);
     const ok = await this.page.locator('.ng-dropdown-panel .ng-option').filter({ hasText: re }).first().click({ timeout }).then(() => true).catch(() => false);
     await this.page.waitForTimeout(1_500);
-    if (!ok) throw new Error(`Transfers: option ${re} not found for "${label}"`);
+    // On a miss, close the panel so a caught (best-effort) pick doesn't leave an
+    // open dropdown that blocks the next field.
+    if (!ok) { await this.closePanel(); throw new Error(`Transfers: option ${re} not found for "${label}"`); }
   }
 
   /** Transfer Out a tag to another BU. Returns the save-response body. */
@@ -65,7 +67,25 @@ class TransfersPage extends StockInwardBasePage {
     await this.pickByLabelText('Destination Business Unit', new RegExp(destination));
     await this.pickByLabelText('Transaction Mode', new RegExp(`^\\s*${transactionMode}\\s*$`));
     await this.pickByLabelText('Item Type', new RegExp(`^\\s*${itemType}\\s*$`));
-    await this.pickByLabelText('Group Category', new RegExp(`^\\s*${groupCategory}\\s*$`));
+    // Group Category is a metal-only filter (Gold/Silver/...) with no Stone
+    // groups. For stone it must be CLEARED (it auto-defaults to a metal group,
+    // e.g. Gold, which then excludes the stone tag from the scan lookup).
+    if (groupCategory) {
+      await this.pickByLabelText('Group Category', new RegExp(`^\\s*${groupCategory}\\s*$`)).catch(() => {});
+    } else {
+      // Stone: the app auto-defaults Group Category to a metal group (Gold)
+      // AFTER Item Type is chosen; wait for it, then clear it so the stone tag
+      // is not filtered out. Retry - the clear button can render late.
+      await this.closePanel();
+      await this.page.waitForTimeout(1_200);
+      const gc = this.selectByLabel('Group Category');
+      for (let i = 0; i < 3; i++) {
+        const has = await gc.locator('.ng-value').first().isVisible({ timeout: 800 }).catch(() => false);
+        if (!has) break;
+        await gc.locator('.ng-clear-wrapper, span.ng-clear').first().click({ force: true, timeout: 2_000 }).catch(() => {});
+        await this.page.waitForTimeout(600);
+      }
+    }
     // From Process / From Transaction Type only exist when the source stock is in
     // a process (e.g. an HO issuing Lot-process stock). A branch transferring
     // plain received stock has neither - pass them only when applicable.

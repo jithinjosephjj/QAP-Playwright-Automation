@@ -113,7 +113,55 @@ const BRAND_ENTITY = {
   },
 };
 
-const ENTITIES = { Metal: METAL_ENTITY, Brand: BRAND_ENTITY };
+/** STONE entity: Stock Inward > Stone tab (stone hierarchy, UOM, rate pricing). */
+const STONE_ENTITY = {
+  name: 'Stone',
+  itemType: 'Stone',
+  stockEntity: 'Stone',
+  // The transfer forms' "Group Category" is a metal-only filter (Gold/Silver/..)
+  // with no Stone option, so it is skipped for stone (null). The stone barcode
+  // uses barcodeStone.group instead.
+  groupCategory: null,
+  transactionType: 'Stone Inward', // internal-transfer grid filter (falls back if absent)
+  vendor: 'Celestia Jewels P',
+  barcodeStone: { group: 'Diamond', article: 'DND-Drop', uom: 'Gram', rate: 1000 },
+  async doInward({ stoneInward, page }) {
+    await stoneInward.open();
+    await stoneInward.selectTab(); // Stone
+    await stoneInward.openAddWizard();
+    const invoiceNo = uniqueInvoiceNo().replace(/[^A-Za-z0-9]/g, ''); // Stone strips non-alphanumerics
+    await stoneInward.fillBasicDetails({
+      inwardType: 'Stock', purchaseType: 'Direct', vendor: this.vendor,
+      invoiceNo, invoiceDate: '01-01-2026',
+    });
+    await stoneInward.nextBtn.click();
+    await stoneInward.waitForIdle();
+    // article search back-fills the stone hierarchy; Without-Tare avoids the tare dialog
+    await stoneInward.fillItem({
+      refType: 'Combination', stoneArticle: 'DND-Drop', entryMode: 'Without Tare Weight',
+      uom: 'Gram', noOfPcs: 1, grossWeight: 25, discountPercent: 0, returnPercent: 0,
+      assortedStock: true, // stone stock must be assorted to become lottable/barcodeable
+    });
+    // Shape ('value') is mandatory and NOT back-filled by the article - set it
+    await stoneInward.pick('value', 'Cushion', { exact: true }).catch(() => {});
+    await stoneInward.waitForIdle();
+    // stage the item ("Add Items", plural)
+    await page.getByRole('button', { name: /^\s*Add Items?\s*$/ }).locator('visible=true').last().click({ timeout: 15_000 }).catch(() => {});
+    await stoneInward.waitForIdle();
+    await page.waitForTimeout(1_500);
+    if (await stoneInward.nextBtn.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await stoneInward.nextBtn.click();
+      await stoneInward.waitForIdle();
+    }
+    const saved = await stoneInward.submit();
+    expect(saved, 'stone inward save response').toBeTruthy();
+    console.log('stone inward save body:', JSON.stringify(saved).slice(0, 300));
+    const inwardNo = inwardNoFrom(saved) || await stoneInward.voucherNumber().catch(() => '');
+    return { inwardNo, invoiceNo };
+  },
+};
+
+const ENTITIES = { Metal: METAL_ENTITY, Brand: BRAND_ENTITY, Stone: STONE_ENTITY };
 
 /**
  * Register the 7-step tag-transfer suite for one entity + destination.
@@ -133,10 +181,10 @@ function registerTagTransferSuite(cfg) {
   const DEST = { bu: destinationBU };
 
   test.describe(title, () => {
-    test(`${tc}-01 ${entity.name.toLowerCase()} inward at Kakkanad HO`, async ({ loginPage, metalInward, brandInward, page }) => {
+    test(`${tc}-01 ${entity.name.toLowerCase()} inward at Kakkanad HO`, async ({ loginPage, metalInward, brandInward, stoneInward, page }) => {
       test.setTimeout(600_000);
       await loginAs(loginPage, page, KAKKANAD);
-      const { inwardNo, invoiceNo } = await entity.doInward({ metalInward, brandInward, page });
+      const { inwardNo, invoiceNo } = await entity.doInward({ metalInward, brandInward, stoneInward, page });
       state.writeState({ inwardNo, invoiceNo });
       console.log(`${entity.name} inward created at Kakkanad (qap): ${inwardNo}`);
     });
@@ -194,8 +242,9 @@ function registerTagTransferSuite(cfg) {
         itemType: entity.itemType,
         lotNo,
         groupCategory: entity.groupCategory,
-        brand: entity.brand, // undefined for Metal
-        amount: entity.barcodeAmount, // undefined for Metal
+        brand: entity.brand, // undefined for Metal/Stone
+        amount: entity.barcodeAmount, // undefined for Metal/Stone
+        stone: entity.barcodeStone, // undefined for Metal/Brand
         grossWeight: 10,
       });
       // Metal tags are dd/mm/nnnnnnn; Brand tags are alphanumeric (e.g. CBJ00002SB)
