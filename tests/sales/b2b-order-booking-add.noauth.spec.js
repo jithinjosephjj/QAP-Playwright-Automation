@@ -41,11 +41,11 @@ test.describe('B2B Order Booking - add record', () => {
     // ---- General Order Information ----
     await b2bOrderBooking.fillOrderDetails({
       purposeType: 'Order',
-      customer: 'Luxurio',
+      customer: 'Celestia Jewels P',
       itemType: 'Metal',
       makingType: 'Job Work',
-      supervisor: 'Abc',
-      smCode: 'AJ10',
+      supervisor: 'sagar',
+      smCode: 'EEEE1',
       orderGivenBy: 'JJ',
       contactNumber: '9898989899',
       deliveryNote: 'Urgent',
@@ -65,7 +65,7 @@ test.describe('B2B Order Booking - add record', () => {
     await b2bOrderBooking.fillItem({
       referenceType: 'Combination',
       groupCategory: 'Gold',
-      category: 'Ring',
+      category: 'Gold Ornaments',
       article: 'Tendulkar',
       purity: '91.60',
       grossWeight: 50,

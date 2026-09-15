@@ -4,7 +4,7 @@
       "C:\\Program Files\\nodejs\\node.exe",
       "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "tests/crm",
+      "tests/sales",
       "--headed",
       "project=chromium"
     ],
@@ -112,20 +112,20 @@
   },
   "suites": [
     {
-      "title": "crm\\customer-registration-add.noauth.spec.js",
-      "file": "crm/customer-registration-add.noauth.spec.js",
+      "title": "sales\\b2b-order-booking-add.noauth.spec.js",
+      "file": "sales/b2b-order-booking-add.noauth.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Customer Registration - add record",
-          "file": "crm/customer-registration-add.noauth.spec.js",
-          "line": 34,
+          "title": "B2B Order Booking - add record",
+          "file": "sales/b2b-order-booking-add.noauth.spec.js",
+          "line": 27,
           "column": 6,
           "specs": [
             {
-              "title": "TC-CRM-CUST-01 add an Individual customer",
+              "title": "TC-B2B-001 add and submit a B2B metal order",
               "ok": false,
               "tags": [],
               "tests": [
@@ -140,67 +140,163 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 117064,
+                      "duration": 72426,
                       "error": {
-                        "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ng-dropdown-panel .ng-option').filter({ hasText: 'Aadhar Card' }).first()\u001b[22m\n",
-                        "stack": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ng-dropdown-panel .ng-option').filter({ hasText: 'Aadhar Card' }).first()\u001b[22m\n\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:134:106\n    at CustomerRegistrationPage.pickDocType (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:132:5)\n    at CustomerRegistrationPage.fillCustomer (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:73:7)\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\crm\\customer-registration-add.noauth.spec.js:51:5",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Ajin G\"\u001b[39m\nReceived: \u001b[31m\"Sioniquser1\"\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Ajin G\"\u001b[39m\nReceived: \u001b[31m\"Sioniquser1\"\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js:59:8",
                         "location": {
-                          "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js",
-                          "column": 106,
-                          "line": 134
+                          "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js",
+                          "column": 8,
+                          "line": 59
                         },
-                        "snippet": "\u001b[90m   at \u001b[39m..\\pages\\CustomerRegistrationPage.js:134\n\n\u001b[0m \u001b[90m 132 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpick(\u001b[32m'documentTypeID'\u001b[39m\u001b[33m,\u001b[39m type)\n \u001b[90m 133 |\u001b[39m       \u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'#kyc-doctype-select .ng-select-container'\u001b[39m)\u001b[33m.\u001b[39mclick()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 134 |\u001b[39m         \u001b[33m.\u001b[39mthen(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'.ng-dropdown-panel .ng-option'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m type })\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mclick()))\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 135 |\u001b[39m   }\n \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m   \u001b[90m/** Pick an address select by value; fall back to its first real option. */\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 58 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39mselectValue(\u001b[32m'salesExecutive'\u001b[39m)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m       \u001b[33m.\u001b[39mtoBe(\u001b[32m'Ajin G'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 61 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39msummaryText()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n \u001b[90m 62 |\u001b[39m       \u001b[33m.\u001b[39mtoMatch(\u001b[35m/Customer Name\\s*:\\s*Luxurio/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js",
-                            "column": 106,
-                            "line": 134
+                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js",
+                            "column": 8,
+                            "line": 59
                           },
-                          "message": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ng-dropdown-panel .ng-option').filter({ hasText: 'Aadhar Card' }).first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39m..\\pages\\CustomerRegistrationPage.js:134\n\n\u001b[0m \u001b[90m 132 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpick(\u001b[32m'documentTypeID'\u001b[39m\u001b[33m,\u001b[39m type)\n \u001b[90m 133 |\u001b[39m       \u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'#kyc-doctype-select .ng-select-container'\u001b[39m)\u001b[33m.\u001b[39mclick()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 134 |\u001b[39m         \u001b[33m.\u001b[39mthen(() \u001b[33m=>\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'.ng-dropdown-panel .ng-option'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m type })\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mclick()))\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 135 |\u001b[39m   }\n \u001b[90m 136 |\u001b[39m\n \u001b[90m 137 |\u001b[39m   \u001b[90m/** Pick an address select by value; fall back to its first real option. */\u001b[39m\u001b[0m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:134:106\u001b[22m\n\u001b[2m    at CustomerRegistrationPage.pickDocType (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:132:5)\u001b[22m\n\u001b[2m    at CustomerRegistrationPage.fillCustomer (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js:73:7)\u001b[22m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\crm\\customer-registration-add.noauth.spec.js:51:5\u001b[22m"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Ajin G\"\u001b[39m\nReceived: \u001b[31m\"Sioniquser1\"\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate\n\n\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 58 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39mselectValue(\u001b[32m'salesExecutive'\u001b[39m)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m       \u001b[33m.\u001b[39mtoBe(\u001b[32m'Ajin G'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 61 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39msummaryText()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n \u001b[90m 62 |\u001b[39m       \u001b[33m.\u001b[39mtoMatch(\u001b[35m/Customer Name\\s*:\\s*Luxurio/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js:59:8\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-09-14T04:49:25.363Z",
+                      "startTime": "2026-09-15T05:07:58.415Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\test-failed-1.png"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\video.webm"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\error-context.md"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\crm-customer-registration--fc053--add-an-Individual-customer-no-auth\\trace.zip"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\trace.zip"
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\pages\\CustomerRegistrationPage.js",
-                        "column": 106,
-                        "line": 134
+                        "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js",
+                        "column": 8,
+                        "line": 59
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "758957890814a3530cc9-66ddddd0b562833c018d",
-              "file": "crm/customer-registration-add.noauth.spec.js",
-              "line": 35,
+              "id": "b706ef11badf2a05cc5a-f34677e6c2eb80e67ccb",
+              "file": "sales/b2b-order-booking-add.noauth.spec.js",
+              "line": 28,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "sales\\order-booking-add.noauth.spec.js",
+      "file": "sales/order-booking-add.noauth.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Order Booking - add record",
+          "file": "sales/order-booking-add.noauth.spec.js",
+          "line": 27,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-OB-001 add and submit a metal stock order",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 420000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 18016,
+                      "error": {
+                        "message": "Error: process date read from the header\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m",
+                        "stack": "Error: process date read from the header\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js:43:63",
+                        "location": {
+                          "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js",
+                          "column": 63,
+                          "line": 43
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 41 |\u001b[39m     \u001b[90m// \"23/06/2026\"), i.e. the login/business date - NOT the real system clock\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[36mconst\u001b[39m deliveryDate \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mprocessDate()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 43 |\u001b[39m     expect(deliveryDate\u001b[33m,\u001b[39m \u001b[32m'process date read from the header'\u001b[39m)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 44 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`process (delivery) date: ${deliveryDate}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mopenAddWizard()\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js",
+                            "column": 63,
+                            "line": 43
+                          },
+                          "message": "Error: process date read from the header\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\n\n\u001b[0m \u001b[90m 41 |\u001b[39m     \u001b[90m// \"23/06/2026\"), i.e. the login/business date - NOT the real system clock\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[36mconst\u001b[39m deliveryDate \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mprocessDate()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 43 |\u001b[39m     expect(deliveryDate\u001b[33m,\u001b[39m \u001b[32m'process date read from the header'\u001b[39m)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 44 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`process (delivery) date: ${deliveryDate}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mopenAddWizard()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js:43:63\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-15T05:09:18.320Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js",
+                        "column": 63,
+                        "line": 43
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "89af8f7f5e3a4876a2ed-27125b3f5bad87c84b30",
+              "file": "sales/order-booking-add.noauth.spec.js",
+              "line": 28,
               "column": 3
             }
           ]
@@ -210,11 +306,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-14T04:49:24.492Z",
-    "duration": 124587.687,
+    "startTime": "2026-09-15T05:07:57.199Z",
+    "duration": 102531.17899999999,
     "expected": 0,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 2,
     "flaky": 0
   }
 }

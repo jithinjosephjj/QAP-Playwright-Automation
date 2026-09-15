@@ -48,8 +48,8 @@ test.describe('Order Booking - add record', () => {
     // ---- General Order Information ----
     await orderBooking.fillOrderDetails({
       itemType: 'Metal',
-      supervisor: 'Abc',
-      smCode: 'AJ10',
+      supervisor: 'sagar',
+      smCode: 'EEEE1',
       deliveryNote: 'Regular',
       deliveryDate, // the process/login date
     });
@@ -63,7 +63,7 @@ test.describe('Order Booking - add record', () => {
     await orderBooking.fillItem({
       referenceType: 'Combination',
       groupCategory: 'Gold',
-      category: 'Ring',
+      category: 'Gold Ornaments',
       article: 'Tendulkar',
       purity: '91.60',
       grossWeight: 50,
