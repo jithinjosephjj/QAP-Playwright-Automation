@@ -6,7 +6,7 @@ const env = require('../utils/env');
 
 /**
  * Runs once before the browser projects. Logs in for real and writes the
- * session to auth/admin-cochin.json so no other spec ever sees the login screen.
+ * session to the client auth file (env.AUTH_FILE) so no other spec ever sees the login screen.
  */
 setup('authenticate', async ({ page }) => {
   setup.setTimeout(120_000);

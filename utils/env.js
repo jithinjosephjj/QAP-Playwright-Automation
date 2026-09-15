@@ -29,8 +29,8 @@ const CLIENTS = {
     url: 'https://qap.sioniq.com',
     user: 'Admin',
     pwd: '123',
-    bu: 'Cochin',
-    authFile: 'auth/qap-admin-cochin.json',
+    bu: 'Kakkanad', // head office - the default login location for qap
+    authFile: 'auth/qap-admin-kakkanad.json',
     e2eDir: 'tests/e2e-qap',
     // Probed live 2026-09-09: legalEntity list is ONLY "Gold & Diamonds";
     // designations are QA Designation PENL / QA Level Desig Q92D / S1KL;
