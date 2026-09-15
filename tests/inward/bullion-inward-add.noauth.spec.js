@@ -5,27 +5,19 @@ const { uniqueRef, businessDate } = require('../../utils/unique');
  * TC-BUI-001 — Bullion Inward: add record on the single-screen form through
  * Add Items, Submit and report Preview.
  *
- * Scenario data (dictated by QA lead, 23-08-2026):
- *   Generation Type: Direct       Vendor: RAJA (typeahead)
+ * Scenario data (QA lead, 23-08-2026; qap data 15-09-2026):
+ *   Generation Type: Direct       Vendor: Celestia Jewels P (typeahead)
  *   Invoice Date:    today        Group Category: Gold
- *   Category:        Ring         Article: Tendulkar
+ *   Category:        Gold Ornaments   Article: Tendulkar
  *   Rate Fixation:   Fix          Purity: 91.6
  *   Gross Weight:    100 (not dictated - agreed default)
  *   Rate:            50000
- *   Additional Charges (mandatory since the app update of 29-08-2026):
- *     item-level  "Item wise charge bullion" / "item wise bullion"
- *     bill-level  "Raja Bullion Charges" (vendor-specific)
- *   Flow (QA lead, 03-09-2026): item charge -> Add Items -> bill charge
- *   -> Submit. The bill-level charge goes in only AFTER the item is on
- *   the grid.
+ *   Additional Charges: NONE. On qap no additional charges are configured/
+ *   saved for bullion (QA lead, 15-09-2026), so the Additional Charges
+ *   buttons are NOT clicked here. Flow: fill entry -> Add Items -> Submit.
+ *   (The QA-client variant of this spec adds item- and bill-level charges.)
  *
  * MUST run headed - see README (Device Radar gate + Local Network Access).
- *
- * RESOLVED (03-09-2026): the silent-Submit issue first seen 29-08-2026 was
- * caused by the charge ORDER - adding the bill-level charge before Add
- * Items left the form invalid, so Submit no-opped. With the corrected
- * order (bill charge AFTER the item is on the grid) Submit fires
- * CreateBullionInward and returns the receipt number.
  */
 test.describe('Bullion Inward - add record', () => {
   test('TC-BUI-001 add and submit a Direct bullion inward', async ({ loginPage, bullionInward, page }) => {
@@ -46,11 +38,11 @@ test.describe('Bullion Inward - add record', () => {
     const invoiceNo = uniqueRef('BUI-E2E');
     const picked = await bullionInward.fillEntry({
       generationType: 'Direct',
-      vendor: 'RAJA',
+      vendor: 'Celestia Jewels P',
       invoiceNo,
       invoiceDate: businessDate().replace(/-/g, '/'), // DD/MM/YYYY
       groupCategory: 'Gold',
-      category: 'Ring',
+      category: 'Gold Ornaments',
       article: 'Tendulkar',
       rateFixationType: 'Fix',
       purity: '91.6',
@@ -99,40 +91,16 @@ test.describe('Bullion Inward - add record', () => {
       }, { timeout: 60_000, message: 'pricing chain never settled into a consistent state' })
       .toBeLessThan(0.05);
 
-    // ---- Additional Charges order (QA lead, 03-09-2026): the ITEM-level
-    // charge goes in BEFORE Add Items; the BILL-level charge is added only
-    // AFTER the item sits in the grid. Charge names are vendor-specific. ----
-    await bullionInward.addAdditionalCharge({
-      buttonIndex: 0, // item-level (next to Add Items)
-      chargeType: 'Item wise charge bullion',
-      chargeName: 'item wise bullion',
-    });
-
     // ---- Add Items (verified - the click is a silent no-op on invalid forms) ----
+    // No Additional Charges on qap - straight to Add Items.
     await bullionInward.addItemsAndVerify('Gross Weight : 100.000');
 
-    // the item-level charge (33.00) flows into the totals with the item
-    await expect
-      .poll(async () => bullionInward.summaryText(), { timeout: 20_000 })
-      .toContain('Additional Charges Value 33.00');
     const summary = await bullionInward.summaryText();
     expect(summary).toContain('Pure Weight : 91.600');
 
     // The item grid row carries the article and the agreed numbers
     await expect(bullionInward.gridRows.first()).toContainText('Tendulkar');
     await expect(bullionInward.gridRows.first()).toContainText('50000');
-
-    // ---- bill-level charge, only AFTER the item is in the grid ----
-    await bullionInward.addAdditionalCharge({
-      buttonIndex: 1, // bill-level (lower Remarks section)
-      chargeType: 'Raja Bullion Charges',
-      chargeName: 'Raja Bullion Charges',
-    });
-
-    // the bill-level charge (2000.00) joins the totals: 33 + 2000
-    await expect
-      .poll(async () => bullionInward.summaryText(), { timeout: 20_000 })
-      .toContain('Additional Charges Value 2033.00');
 
     // ---- Submit ----
     // Unlike Metal/Brand/Stone/Alloy, this screen shows NO Print dialog after
