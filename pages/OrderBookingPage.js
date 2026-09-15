@@ -42,10 +42,57 @@ class OrderBookingPage extends StockInwardBasePage {
     await this.pick('smcode', smCode, { search: true });
     await this.pick('deliveryNote', deliveryNote);
 
+    await this.setDeliveryDate(deliveryDate);
+  }
+
+  /** The flatpickr calendar popup (appended to <body>). */
+  get datePickerPopup() {
+    return this.page.locator('.flatpickr-calendar.open');
+  }
+
+  /**
+   * Delivery Date (DD/MM/YYYY). Typing the date opens the calendar popup,
+   * which does NOT close on blur/Escape (seen on qap 15-09-2026) and then
+   * overlays the Build Order Items dropdowns below it. So after typing, the
+   * matching day is CLICKED in the calendar (that both commits the value to
+   * the model and closes the popup); anything still open is dismissed by
+   * clicking the field label, and the popup is asserted gone.
+   */
+  async setDeliveryDate(deliveryDate) {
+    const [dd, mm, yyyy] = String(deliveryDate).split(/[\/-]/).map(Number);
     const date = this.page.locator('#deliveryDate');
     await date.fill(deliveryDate);
     await date.blur();
-    await this.page.keyboard.press('Escape'); // close the date-picker popup
+
+    const popup = this.datePickerPopup;
+    if (await popup.isVisible({ timeout: 1_500 }).catch(() => false)) {
+      // flatpickr keeps showing the CURRENT month after a typed value, so
+      // steer its month dropdown / year box to the target first, then click
+      // the day - a day click commits the value and closes the calendar.
+      const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthSel = popup.locator('select.flatpickr-monthDropdown-months');
+      if (await monthSel.count()) await monthSel.selectOption({ label: MONTHS[mm - 1] }).catch(() => {});
+      const yearBox = popup.locator('input.cur-year');
+      if (await yearBox.count() && (await yearBox.inputValue()) !== String(yyyy)) {
+        await yearBox.fill(String(yyyy));
+        await yearBox.press('Enter').catch(() => {});
+      }
+      const day = popup.locator(`.flatpickr-day[aria-label="${MONTHS[mm - 1]} ${dd}, ${yyyy}"]:not(.prevMonthDay):not(.nextMonthDay)`);
+      await day.first().click({ timeout: 5_000 }).catch(() => {});
+    }
+    if (await popup.isVisible({ timeout: 500 }).catch(() => false)) {
+      // click somewhere neutral (NOT the field label - that re-focuses the
+      // input and re-opens the calendar)
+      await this.page.getByRole('heading', { name: /order booking/i }).first().click({ timeout: 3_000 }).catch(() => {});
+      await this.page.keyboard.press('Escape');
+    }
+    await popup.waitFor({ state: 'hidden', timeout: 5_000 });
+
+    const pad = (n) => String(n).padStart(2, '0');
+    const shown = (await date.inputValue()).replace(/\//g, '-');
+    if (shown !== `${pad(dd)}-${pad(mm)}-${yyyy}`) {
+      throw new Error(`Delivery Date did not stick: field shows "${shown}", wanted ${pad(dd)}-${pad(mm)}-${yyyy}`);
+    }
   }
 
   /**

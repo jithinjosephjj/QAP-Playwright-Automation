@@ -72,16 +72,19 @@ class BasePage {
    */
   async processDate() {
     return this.page.evaluate(() => {
-      const dateRe = /\b(\d{2}\/\d{2}\/\d{4})\b/;
-      const buRe = /(Cochin|Aluva|Palakkad|Trivendrum|Hyderabad)/;
+      // QA renders the header date as DD/MM/YYYY, qap as DD-MM-YYYY -
+      // accept both and normalise to DD/MM/YYYY for callers.
+      const dateRe = /\b(\d{2})[\/-](\d{2})[\/-](\d{4})\b/;
+      const norm = (m) => `${m[1]}/${m[2]}/${m[3]}`;
+      const buRe = /(Cochin|Aluva|Palakkad|Kakkanad|Trivendrum|Hyderabad)/;
       // the header chip carries both the date and the BU name - prefer it
       const nodes = [...document.querySelectorAll('span, div, p, button, a, li')];
       for (const n of nodes) {
         const t = (n.textContent || '').replace(/\s+/g, ' ').trim();
-        if (t.length <= 60 && dateRe.test(t) && buRe.test(t)) return t.match(dateRe)[1];
+        if (t.length <= 60 && dateRe.test(t) && buRe.test(t)) return norm(t.match(dateRe));
       }
       const m = (document.body.innerText || '').match(dateRe);
-      return m ? m[1] : '';
+      return m ? norm(m) : '';
     });
   }
 }

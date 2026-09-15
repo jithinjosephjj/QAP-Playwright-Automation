@@ -5,24 +5,22 @@ const { DEMO_FILES } = require('../../utils/demo-files');
  * TC-OB-001 — Order Booking: add a stock order through Order Details →
  * Build Order Items → Add Items → Next → Submit.
  *
- * Scenario data (QA lead screenshot, 23-08-2026):
- *   Item Type: Metal        Supervisor: Abc
- *   SM Code:   AJ10         Sales Executive: Ajin G (auto from SM code)
+ * Scenario data (QA lead screenshot, 23-08-2026; qap data 15-09-2026):
+ *   Item Type: Metal        Supervisor: sagar
+ *   SM Code:   EEEE1        Sales Executive: Sioniquser1 (auto from SM code)
  *   Delivery Note: Regular  Reference Type: Combination
- *   Article:   Tendulkar (auto-fills Gold / Ring + every sub-category)
+ *   Article:   Tendulkar (auto-fills Gold / Gold Ornaments + sub-categories)
+ *   Delivery Date: the process date, typed then clicked in the flatpickr
+ *   calendar (the popup otherwise stays open over the item dropdowns)
  *   Purity:    91.60        No of Pcs: 1 (preset)   Gross Weight: 50
  *
  * MUST run headed - see README (Device Radar gate + Local Network Access).
  *
- * KNOWN APP BUG (confirmed by QA lead, 28-08-2026): Submit currently fails -
- * POST OrderBooking/CreateOrderBooking returns HTTP 400 "One or more
- * validation errors occurred" listing fields the app should populate itself
- * (OrderBookingVRL.BaseUOM, ClientCurrencyName, and per-item HSNCode,
- * GroupCategory/Category + their ShortNames). The UI form is fully valid at
- * that point; the payload the app builds is just missing those fields.
- * Reproduced identically with manual hierarchy picks, searched article picks
- * and list article picks. This spec intentionally asserts the save response,
- * so it FAILS while the bug exists and turns green when dev fixes it.
+ * HISTORY: on the QA client (28-08-2026) POST OrderBooking/CreateOrderBooking
+ * returned HTTP 400 "One or more validation errors occurred" for fields the
+ * app should populate itself (BaseUOM, ClientCurrencyName, per-item HSNCode,
+ * GroupCategory/Category + ShortNames). The B2B sibling saves fine on qap
+ * (15-09-2026); this spec asserts the save response either way.
  */
 test.describe('Order Booking - add record', () => {
   test('TC-OB-001 add and submit a metal stock order', async ({ loginPage, orderBooking, page }) => {
@@ -57,7 +55,7 @@ test.describe('Order Booking - add record', () => {
     // Sales Executive auto-fills from the SM Executive Code
     await expect
       .poll(async () => orderBooking.selectValue('salesExecutive'), { timeout: 20_000 })
-      .toBe('Ajin G');
+      .toBe('Sioniquser1');
 
     // ---- Build Order Items ----
     await orderBooking.fillItem({
@@ -71,7 +69,7 @@ test.describe('Order Booking - add record', () => {
 
     // The article back-fills the whole hierarchy
     expect(await orderBooking.selectValue('groupCategory')).toBe('Gold');
-    expect(await orderBooking.selectValue('category')).toBe('Ring');
+    expect(await orderBooking.selectValue('category')).toBe('Gold Ornaments');
 
     // ---- attach one demo image via the Add Files control ----
     await orderBooking.attachFileViaAddFiles(DEMO_FILES.image1);
@@ -81,7 +79,7 @@ test.describe('Order Booking - add record', () => {
     const summary = await orderBooking.summaryText();
     expect(summary).toContain('Gross Weight : 50.000');
     expect(summary).toContain('Net Weight : 50.000');
-    expect(summary).toMatch(/Sales Executive\s*:\s*AJ10 \/ Ajin G/);
+    expect(summary).toMatch(/Sales Executive\s*:\s*EEEE1 \/ Sioniquser1/);
 
     // ---- Next -> Submit ----
     if (!(await orderBooking.submitBtn.isVisible({ timeout: 3_000 }).catch(() => false))) {

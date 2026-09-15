@@ -40,10 +40,7 @@ class B2BOrderBookingPage extends OrderBookingPage {
     await this.fillByLabel('Contact Number', contactNumber);
     await this.pick('deliveryNote', deliveryNote);
 
-    const date = this.page.locator('#deliveryDate');
-    await date.fill(deliveryDate);
-    await date.blur();
-    await this.page.keyboard.press('Escape'); // close the date-picker popup
+    await this.setDeliveryDate(deliveryDate);
   }
 
   /**

@@ -5,24 +5,25 @@ const { businessDate } = require('../../utils/unique');
  * TC-B2B-001 — B2B Order Booking: add an order through Order Details →
  * Build B2B Order Items → Add Items → Next → Submit.
  *
- * Scenario data (QA lead screenshot, 28-08-2026):
- *   Purpose Type: Order      Customer: Luxurio (address panel auto-fills)
+ * Scenario data (QA lead screenshot, 28-08-2026; qap data 15-09-2026):
+ *   Purpose Type: Order      Customer: Celestia Jewels P (address auto-fills)
  *   Customer Branch: (empty) Item Type: Metal      Making Type: Job Work
- *   Supervisor: Abc          SM Code: AJ10 -> Sales Executive: Ajin G
+ *   Supervisor: sagar        SM Code: EEEE1 -> Sales Executive: Sioniquser1
  *   Order Given By: JJ       Contact Number: 9898989899
- *   Delivery Note: Urgent    Delivery Date: any date
- *   Items: Combination / Gold / Ring / Tendulkar / 91.60 / gross 50
+ *   Delivery Note: Urgent    Delivery Date: today + 30 (typed, then the day
+ *                            is clicked in the calendar so the popup closes)
+ *   Items: Combination / Gold / Gold Ornaments / Tendulkar / 91.60 / gross 50
  *
  * MUST run headed - see README (Device Radar gate + Local Network Access).
  *
- * KNOWN APP BUG (confirmed 28-08-2026): B2B shares the Order Booking save
- * endpoint and its defect - POST OrderBooking/CreateOrderBooking returns
- * HTTP 400 listing app-derived fields as missing (VRL.BaseUOM,
- * ClientCurrencyName; per-item HSNCode, GroupCategory/Category + ShortNames)
- * while the UI form is fully valid. Same failure as TC-OB-001 (bug report
- * filed); sample B2B traceId 00-c91972f93d6e0db00bd477af252d6745. This spec
- * asserts the save response, so it FAILS while the bug exists and turns
- * green when dev fixes it.
+ * HISTORY: on the QA client (28-08-2026) POST OrderBooking/CreateOrderBooking
+ * returned HTTP 400 listing app-derived fields as missing (bug report filed,
+ * traceId 00-c91972f93d6e0db00bd477af252d6745). On qap (15-09-2026) the save
+ * succeeds (code 1001, receipt BBBBx) - this spec asserts that response.
+ *
+ * Delivery Date: typing the date leaves the calendar popup OPEN over the
+ * Build Order Items dropdowns (Escape/blur do not close it), so the page
+ * object clicks the target day in the calendar - see setDeliveryDate().
  */
 test.describe('B2B Order Booking - add record', () => {
   test('TC-B2B-001 add and submit a B2B metal order', async ({ loginPage, b2bOrderBooking, page }) => {
@@ -56,10 +57,10 @@ test.describe('B2B Order Booking - add record', () => {
     // the customer picked above.
     await expect
       .poll(async () => b2bOrderBooking.selectValue('salesExecutive'), { timeout: 20_000 })
-      .toBe('Ajin G');
+      .toBe('Sioniquser1');
     await expect
       .poll(async () => b2bOrderBooking.summaryText(), { timeout: 20_000 })
-      .toMatch(/Customer Name\s*:\s*Luxurio/);
+      .toMatch(/Customer Name\s*:\s*Celestia Jewels P/);
 
     // ---- Build B2B Order Items ----
     await b2bOrderBooking.fillItem({
