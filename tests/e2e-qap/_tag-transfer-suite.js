@@ -173,6 +173,11 @@ const ENTITIES = { Metal: METAL_ENTITY, Brand: BRAND_ENTITY, Stone: STONE_ENTITY
  * @param {string} [cfg.destinationLabel]  human label for logs
  * @param {string} [cfg.entity]    'Metal' (default) | 'Brand'
  */
+/**
+ * @param {{title:string, tc:string, stateFile:string, destinationBU:string,
+ *   destinationLabel?:string, entity?:'Metal'|'Brand'|'Stone',
+ *   stopAfterTransferOut?:boolean}} cfg
+ */
 function registerTagTransferSuite(cfg) {
   const { title, tc, stateFile, destinationBU } = cfg;
   const destLabel = cfg.destinationLabel || destinationBU;
@@ -302,6 +307,10 @@ function registerTagTransferSuite(cfg) {
       console.log(`Transfer Out to ${destLabel} submitted for tag ${tag} (${transferOutNo})`);
     });
 
+    // cfg.stopAfterTransferOut: leave the transfer PENDING at the destination
+    // (used by the return-tag scenario, which handles the Transfer In itself)
+    if (cfg.stopAfterTransferOut) return;
+
     test(`${tc}-07 transfer in at ${destLabel} (from Kakkanad)`, async ({ loginPage, transfers, page }) => {
       test.setTimeout(600_000);
       const { tag, transferOutNo } = state.readState();
@@ -323,4 +332,4 @@ function registerTagTransferSuite(cfg) {
   });
 }
 
-module.exports = { registerTagTransferSuite };
+module.exports = { registerTagTransferSuite, ENTITIES };

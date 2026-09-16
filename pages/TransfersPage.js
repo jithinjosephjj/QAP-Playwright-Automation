@@ -159,7 +159,37 @@ class TransfersPage extends StockInwardBasePage {
     await this.page.waitForTimeout(1_500);
   }
 
-  async transferIn({ fromBU = 'Kakkanad', transactionMode = 'Stock', stockSourceType = 'TagWise', itemType = 'Metal', groupCategory = 'Gold', transferOutNo, receiver = 'JJ' }) {
+  /**
+   * Rows of the list grid on a tab ("Transfer In" / "Transfer Out"), each as
+   * one whitespace-normalised string, top row first. Optional `search` is
+   * typed into the grid's search box first.
+   */
+  async listRowsText(tab, search) {
+    await this.open();
+    await this.openTab(tab);
+    await this.waitForIdle();
+    await this.page.waitForTimeout(2_000);
+    if (search) {
+      const box = this.page.getByRole('textbox', { name: /search/i }).locator('visible=true').first();
+      if (await box.isVisible({ timeout: 3_000 }).catch(() => false)) {
+        await box.fill(String(search));
+        await box.press('Enter').catch(() => {});
+        await this.waitForIdle();
+        await this.page.waitForTimeout(2_000);
+      }
+    }
+    return (await this.page.locator('table tbody tr').allInnerTexts()).map((s) => s.replace(/\s+/g, ' ').trim());
+  }
+
+  /**
+   * Transfer In - RETURN the incoming items to the sender instead of
+   * accepting them (the "Return" button beside "Accept" on the same form).
+   */
+  transferInReturn(opts) {
+    return this.transferIn({ ...opts, action: 'Return' });
+  }
+
+  async transferIn({ fromBU = 'Kakkanad', transactionMode = 'Stock', stockSourceType = 'TagWise', itemType = 'Metal', groupCategory = 'Gold', transferOutNo, receiver = 'JJ', remarks, action = 'Accept' }) {
     await this.open();
     await this.openTab('Transfer In');
     await this.addBtn.click({ timeout: 30_000 });
@@ -192,24 +222,37 @@ class TransfersPage extends StockInwardBasePage {
     // receiver name
     const rec = this.page.getByRole('textbox', { name: /Enter receiver name/i }).locator('visible=true').first();
     if (await rec.isVisible({ timeout: 8_000 }).catch(() => false)) { await rec.click(); await rec.fill(String(receiver)); }
+    if (remarks) {
+      const rem = this.page.locator('//label[contains(.,"Remarks")]/following::textarea[1] | //label[contains(.,"Remarks")]/following::input[1]').locator('visible=true').first();
+      if (await rem.isVisible({ timeout: 3_000 }).catch(() => false)) await rem.fill(String(remarks)).catch(() => {});
+    }
     await this.page.waitForTimeout(800);
 
-    // Accept
+    // Accept (or Return - same form, the button beside Accept)
+    const actionRe = new RegExp(`^\\s*${action}\\s*$`, 'i');
     const resp = this.page.waitForResponse(
-      (r) => ['POST', 'PUT'].includes(r.request().method()) && /transfer|accept|create|save/i.test(r.url()) && !/GetAll|Pagination|KeepAlive|GetMasterData|Translation|List|Search/i.test(r.url()),
+      (r) => ['POST', 'PUT'].includes(r.request().method()) && /transfer|accept|create|save|return|reject/i.test(r.url()) && !/GetAll|Pagination|KeepAlive|GetMasterData|Translation|List|Search/i.test(r.url()),
       { timeout: 60_000 },
     ).catch(() => null);
-    const accept = this.page.locator('button').filter({ hasText: /^\s*Accept\s*$/ }).locator('visible=true').last();
-    await accept.scrollIntoViewIfNeeded().catch(() => {});
-    await accept.click({ timeout: 15_000, force: true });
+    const actionBtn = this.page.locator('button').filter({ hasText: actionRe }).locator('visible=true').last();
+    await actionBtn.scrollIntoViewIfNeeded().catch(() => {});
+    await actionBtn.click({ timeout: 15_000, force: true });
     await this.page.waitForTimeout(1_500);
-    const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm/i }).getByRole('button', { name: /Yes|Ok|Confirm|Accept/i }).locator('visible=true').last();
-    if (await confirm.isVisible({ timeout: 3_000 }).catch(() => false)) await confirm.click().catch(() => {});
+    // confirmation (and, for Return, a possible reason box) in a dialog
+    const dialog = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm|Return|Reason|Remark/i }).locator('visible=true').last();
+    if (await dialog.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      const reason = dialog.locator('textarea, input[type="text"]').locator('visible=true').first();
+      if (await reason.isVisible({ timeout: 1_000 }).catch(() => false) && !(await reason.inputValue().catch(() => ''))) {
+        await reason.fill(remarks || `${action} by automation`).catch(() => {});
+      }
+      const confirm = dialog.getByRole('button', { name: /Yes|Ok|Confirm|Accept|Return|Submit/i }).locator('visible=true').last();
+      if (await confirm.isVisible({ timeout: 2_000 }).catch(() => false)) await confirm.click().catch(() => {});
+    }
     const r = await resp;
-    if (!r) throw new Error('Transfer In Accept fired no save request - form silently blocked');
+    if (!r) throw new Error(`Transfer In ${action} fired no save request - form silently blocked`);
     const body = await r.json().catch(() => null);
-    console.log('transfer in save:', r.status(), r.url().split('/').slice(-1)[0], JSON.stringify(body).slice(0, 250));
-    if (r.status() >= 400 || (body && body.errorCode)) throw new Error(`Transfer In rejected (HTTP ${r.status()}): ${body ? body.error || body.message || '' : ''}`);
+    console.log(`transfer in ${action.toLowerCase()} save:`, r.status(), r.url().split('/').slice(-1)[0], JSON.stringify(body).slice(0, 250));
+    if (r.status() >= 400 || (body && body.errorCode)) throw new Error(`Transfer In ${action} rejected (HTTP ${r.status()}): ${body ? body.error || body.message || '' : ''}`);
     await this.page.locator('.btn-light, .btn-close').last().click({ timeout: 6_000 }).catch(() => {});
     return body;
   }
