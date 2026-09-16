@@ -1,3 +1,6 @@
 
 # e2e runtime state (transient)
 e2e-*-state.json
+
+# page-load smoke suite output (tests/load)
+reports/
