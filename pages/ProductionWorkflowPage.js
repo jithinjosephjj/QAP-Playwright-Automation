@@ -466,6 +466,46 @@ class ProductionWorkflowPage extends StockInwardBasePage {
   }
 
   // ---------- 4/6. Process Movement ----------
+  /**
+   * Item Type on the Sample-source forms: the controlname differs per build /
+   * client ("itemType" on QA, "masterDataValueID_JewelleryItemType" on qap)
+   * and the caption is often a plain text node, not a <label>. The grids stay
+   * EMPTY until it is set, so try each way in turn and say so when none works.
+   */
+  async pickItemTypeAnywhere(itemType) {
+    const re = new RegExp(`^\\s*${itemType}\\s*$`);
+    // the VISIBLE Item Type select on the open form (caption = text node or label)
+    const visibleSel = () => this.page
+      .locator('xpath=//*[normalize-space(text())="Item Type"]/following::ng-select[1]')
+      .locator('visible=true').last();
+    const shown = async () => ((await visibleSel().locator('.ng-value').first().textContent().catch(() => '')) || '').trim();
+    if (re.test(await shown())) return true;
+    const tries = [
+      async () => {
+        const sel = visibleSel();
+        await sel.locator('.ng-select-container').click();
+        const opt = this.page.locator('.ng-dropdown-panel .ng-option').filter({ hasText: re }).first();
+        await opt.waitFor({ state: 'visible', timeout: 10_000 });
+        await opt.click();
+      },
+      () => this.pick('masterDataValueID_JewelleryItemType', itemType, { exact: true }),
+      () => this.pick('itemType', itemType, { exact: true }),
+      () => this.pickByLabel('Item Type', itemType, { exact: true }),
+    ];
+    for (const t of tries) {
+      try {
+        await t();
+        await this.page.waitForTimeout(1_500);
+        // verify the visible select really took the value (a hidden filter
+        // panel elsewhere can carry an "Item Type" label too)
+        if (re.test(await shown())) return true;
+      } catch { /* next */ }
+      await this.page.keyboard.press('Escape').catch(() => {});
+    }
+    console.log(`pickItemTypeAnywhere: could not select Item Type "${itemType}" (visible select shows "${await shown()}")`);
+    return false;
+  }
+
   async processMovementAccept(d) {
     await this.openRoute('/prd/app-process-movement-setup');
     await this.page.getByRole('tab', { name: 'Accept' }).click().catch(() => {});
@@ -473,16 +513,21 @@ class ProductionWorkflowPage extends StockInwardBasePage {
     await this.pick('process', d.process, { search: true });
     if (d.subProcess) await this.pick('subProcess', d.subProcess, { search: true }).catch(() => {});
     await this.pick('sourceType', d.sourceType || 'Job Work', { exact: true });
-    // the Sample source adds an Item Type filter
-    if (d.itemType) {
-      await this.pick('itemType', d.itemType, { exact: true }).catch(() =>
-        this.pickByLabel('Item Type', d.itemType, { exact: true }).catch(() => {}));
-    }
+    // the Sample source adds an Item Type filter (grid empty until set)
+    if (d.itemType) await this.pickItemTypeAnywhere(d.itemType);
     await this.page.waitForTimeout(2_500);
     // grids key rows by doc numbers we may not hold - first pending row is
     // ours (grid pre-filtered by process + source)
-    if (!(await this.selectRowOrFirst(d.rowText))) {
-      console.log(`processMovementAccept: nothing pending at ${d.process} - already accepted, skipping`);
+    let selected = false;
+    try {
+      selected = await this.selectRowOrFirst(d.rowText);
+    } catch (e) {
+      // a stale/non-selectable row (e.g. everything already accepted)
+      const rows = await this.page.locator('table tbody tr').allInnerTexts().catch(() => []);
+      console.log(`processMovementAccept: could not select a row (${String(e).split('\n')[0]}); grid: ${JSON.stringify(rows.map((r) => r.replace(/\s+/g, ' ').trim().slice(0, 120)).slice(0, 4))}`);
+    }
+    if (!selected) {
+      console.log(`processMovementAccept: nothing pending at ${d.process} for ${d.rowText} - already accepted, skipping`);
       return 'skipped';
     }
     await this.page.getByRole('button', { name: 'Accept' }).click();
@@ -502,10 +547,7 @@ class ProductionWorkflowPage extends StockInwardBasePage {
     await this.pickByLabel('From Process', d.fromProcess);
     if (d.fromSubProcess) await this.pickByLabel('From Sub Process', d.fromSubProcess).catch(() => {});
     await this.pickByLabel('Production Source', d.productionSource || 'Job Work', { exact: true });
-    if (d.itemType) {
-      await this.pickByLabel('Item Type', d.itemType, { exact: true }).catch(() =>
-        this.pick('itemType', d.itemType, { exact: true }).catch(() => {}));
-    }
+    if (d.itemType) await this.pickItemTypeAnywhere(d.itemType);
     // "Production No With Sub No" filters by the PRODUCTION number
     // (D42026/...), which we may not hold - use it only when we have it,
     // never with the job work number (wrong value = grid filtered to nothing).
@@ -542,11 +584,8 @@ class ProductionWorkflowPage extends StockInwardBasePage {
     await this.pick('masterDataValueID_WorkerType', 'Inhouse Worker', { exact: true });
     await this.pick('vendorID', d.worker, { search: true });
     await this.pick('masterDataValueID_ProductionSourceType', d.productionSource || 'Job Work', { exact: true });
-    // the Sample source adds an Item Type filter
-    if (d.itemType) {
-      await this.pick('itemType', d.itemType, { exact: true }).catch(() =>
-        this.pickByLabel('Item Type', d.itemType, { exact: true }).catch(() => {}));
-    }
+    // the Sample source adds an Item Type filter (grid empty until set)
+    if (d.itemType) await this.pickItemTypeAnywhere(d.itemType);
     await this.page.waitForTimeout(2_500);
   }
 
@@ -696,19 +735,44 @@ class ProductionWorkflowPage extends StockInwardBasePage {
   }
 
   /** Check a finalize checkbox by accessible name or invisible-click label. */
+  /**
+   * Tick the finalize checkbox and VERIFY it is ticked. A receipt saved with
+   * "Finalize Sample" unticked leaves the sample stuck (never pending for
+   * Sample Receipt) - seen 16-09-2026 on qap, where a forced check() did not
+   * toggle the styled checkbox. Returns true only when the box reads checked.
+   */
   async checkFinalizeBox(pattern) {
     const box = this.page.getByRole('checkbox', { name: pattern }).first();
-    if (await box.isVisible({ timeout: 5_000 }).catch(() => false)) {
-      if (!(await box.isChecked().catch(() => false))) await box.check({ force: true });
-      console.log(`workerReceipt: finalize checkbox checked (${pattern})`);
-      return true;
-    }
     const lbl = this.page.locator('label').filter({ hasText: pattern }).first();
-    if (await lbl.isVisible().catch(() => false)) {
-      await lbl.click();
-      console.log(`workerReceipt: finalize checkbox checked via label (${pattern})`);
-      return true;
+    const state = async () => {
+      if (await box.count()) {
+        const c = await box.isChecked().catch(() => null);
+        if (c !== null) return c;
+        const aria = await box.getAttribute('aria-checked').catch(() => null);
+        if (aria !== null) return aria === 'true';
+      }
+      // styled checkbox: the real input may sit hidden next to the label
+      const hidden = lbl.locator('xpath=preceding-sibling::input[@type="checkbox"][1] | xpath=following-sibling::input[@type="checkbox"][1] | xpath=..//input[@type="checkbox"]').first();
+      if (await hidden.count()) return hidden.isChecked().catch(() => null);
+      return null;
+    };
+    const visibleBox = await box.isVisible({ timeout: 5_000 }).catch(() => false);
+    const visibleLbl = await lbl.isVisible().catch(() => false);
+    if (!visibleBox && !visibleLbl) return false;
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      if ((await state()) === true) {
+        console.log(`workerReceipt: finalize checkbox verified checked (${pattern})`);
+        return true;
+      }
+      if (visibleBox && attempt === 1) await box.check({ force: true }).catch(() => {});
+      else if (visibleBox && attempt === 2) await box.click({ force: true }).catch(() => {});
+      else if (visibleLbl) await lbl.click({ force: true }).catch(() => {});
+      await this.page.waitForTimeout(600);
     }
+    const final = await state();
+    if (final === true) { console.log(`workerReceipt: finalize checkbox verified checked (${pattern})`); return true; }
+    console.log(`workerReceipt: finalize checkbox (${pattern}) could NOT be verified checked (state=${final})`);
     return false;
   }
 
@@ -850,10 +914,7 @@ class ProductionWorkflowPage extends StockInwardBasePage {
     await this.pickByLabel('Worker Type', 'Inhouse Worker', { exact: true });
     await this.pickByLabel('Worker', d.worker, { search: true });
     await this.pickByLabel('Production Source Type', d.productionSource || 'Job Work', { exact: true });
-    if (d.itemType) {
-      await this.pickByLabel('Item Type', d.itemType, { exact: true }).catch(() =>
-        this.pick('itemType', d.itemType, { exact: true }).catch(() => {}));
-    }
+    if (d.itemType) await this.pickItemTypeAnywhere(d.itemType);
     await this.page.waitForTimeout(2_500);
     if (d.item) {
       // ---- Settlement Wise receipt (Casting): an ITEM FORM, not a grid ----
@@ -898,7 +959,21 @@ class ProductionWorkflowPage extends StockInwardBasePage {
           await this.page.locator('.ng-dropdown-panel .ng-option').filter({ hasText: d.item.article }).first().click();
         }
       }
-      if (d.item.purity) await this.pickByLabel('Purity', d.item.purity, { search: false }).catch(() => {});
+      if (d.item.purity) {
+        // purity captions differ per client ("(22 Karat Gold)" on QA, "22 Karat"
+        // on qap) - try the caption, then a typed search, then the first option
+        await this.pickByLabel('Purity', d.item.purity, { search: false })
+          .catch(() => this.pickByLabel('Purity', d.item.puritySearch || d.item.purity, { search: true }))
+          .catch(async () => {
+            const sel = this.page.locator('label:text-is("Purity")').last().locator('xpath=following::ng-select[1]');
+            await sel.locator('.ng-select-container').click();
+            const first = this.page.locator('.ng-dropdown-panel .ng-option').first();
+            await first.waitFor({ state: 'visible', timeout: 10_000 });
+            console.log(`workerReceipt: purity "${d.item.purity}" not offered - picking "${(await first.textContent() || '').trim()}"`);
+            await first.click();
+          })
+          .catch(() => {});
+      }
       if (d.item.weight !== undefined) {
         const weight = this.page
           .locator('label:text-is("Gross Weight")')
@@ -1040,7 +1115,8 @@ class ProductionWorkflowPage extends StockInwardBasePage {
         : null;
     if (finalizePattern && !this.finalizeChecked) {
       const ok = await this.checkFinalizeBox(finalizePattern);
-      if (!ok) throw new Error(`finalize checkbox matching ${finalizePattern} never appeared on the receipt`);
+      // never SAVE an unfinalized final receipt - the piece would be stuck
+      if (!ok) throw new Error(`finalize checkbox matching ${finalizePattern} is not ticked on the receipt - not submitting (the sample/repair would be stuck in production)`);
     }
     this.finalizeChecked = false;
 

@@ -25,6 +25,13 @@ class SampleWorkflowPage extends StockInwardBasePage {
     await this.page.waitForTimeout(1_500);
   }
 
+  /** Rows of a tab's list grid as whitespace-normalised strings (top row first). */
+  async listRowsText(route, tabName) {
+    await this.openTab(route, tabName);
+    await this.page.waitForTimeout(2_000);
+    return (await this.page.locator('table tbody tr').allInnerTexts()).map((r) => r.replace(/\s+/g, ' ').trim());
+  }
+
   /** Every tab renders its OWN add button - click the visible one. */
   async clickVisibleAdd() {
     await this.waitForSpinner();
@@ -230,8 +237,12 @@ class SampleWorkflowPage extends StockInwardBasePage {
 
     // received-from + contact: two plain textboxes on the form (no ids -
     // the QA lead's recording addresses them positionally, proven live)
-    await this.page.getByRole('textbox').first().fill(receivedFrom);
-    await this.page.getByRole('textbox').nth(1).fill(contactNumber);
+    // qap (16-09-2026) shows a single "description" textbox here instead -
+    // fill whatever the form offers, positionally
+    const boxes = this.page.getByRole('textbox').locator('visible=true');
+    const nBoxes = await boxes.count();
+    if (nBoxes >= 1) await boxes.first().fill(receivedFrom);
+    if (nBoxes >= 2) await boxes.nth(1).fill(contactNumber);
     await this.waitForIdle();
     await this.page.waitForTimeout(2_500);
 
@@ -271,7 +282,16 @@ class SampleWorkflowPage extends StockInwardBasePage {
     await this.openTab('/prc/app-repair-setup', 'Sample');
     await this.clickVisibleAdd();
 
-    await this.pick('masterDataValueID_JobWorkMode', mode, { exact: true });
+    // Job Work Mode lists only modes that still have samples PENDING receipt -
+    // "No items found" means there is nothing left to receive (already done)
+    try {
+      await this.pick('masterDataValueID_JobWorkMode', mode, { exact: true });
+    } catch (e) {
+      if (/No items found/.test(String(e))) {
+        throw new Error(`Sample Receipt: nothing pending to receive (Job Work Mode list is empty) - sample ${sampleNo} was probably received already`);
+      }
+      throw e;
+    }
     if (mode === 'Outsource') {
       await this.pick('vendorID', vendor);
     } else {
