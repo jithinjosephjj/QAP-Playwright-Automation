@@ -215,6 +215,29 @@ highest-leverage change for the stability of this suite.
 
 ---
 
+## Save-toast guard (automatic, every spec)
+
+QA-lead rule (16-09-2026): after every successful save the app must show its
+"Saved successfully" toast. A save whose API response says success but shows
+no toast is an APPLICATION BUG and must be flagged in the report.
+
+This is enforced centrally by the automatic fixture `saveToastGuard`
+(`fixtures/test-fixtures.js` -> `utils/save-toast-guard.js`), so every spec that
+imports `test` from `fixtures/test-fixtures` gets it with no changes:
+
+- every POST/PUT to a Create/Save/Submit/Accept/Update/Generate/Register/
+  Finalize endpoint whose body reports success (code 1001 / "Saved
+  successfully") is treated as a save;
+- for each save the guard waits up to 8 s for a visible success toast (or
+  success dialog) and logs `toast ok after save: ...`;
+- at test end, saves WITHOUT a toast are printed as
+  `BUG: "Saved successfully" toast not shown after save ...`, added to the test
+  as a **BUG annotation** (visible in the HTML report) and reported through
+  `expect.soft`, so the test is marked failed with that message while the
+  workflow itself still ran to the end.
+
+`SAVE_TOAST_GUARD=warn` reports without failing; `SAVE_TOAST_GUARD=off` disables.
+
 ## Checklist for every NEW add-operation spec
 
 Mandatory (QA lead directive) — every new page's add spec includes all of these:

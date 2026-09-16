@@ -26,6 +26,7 @@ const { CustomerRegistrationPage } = require('../pages/CustomerRegistrationPage'
 const { DepartmentProcessPage } = require('../pages/DepartmentProcessPage');
 const { InternalTransferPage } = require('../pages/InternalTransferPage');
 const { TransfersPage } = require('../pages/TransfersPage');
+const { attachSaveToastGuard, reportSaveToastMisses } = require('../utils/save-toast-guard');
 
 /**
  * Import { test, expect } from here instead of '@playwright/test' and page
@@ -34,6 +35,17 @@ const { TransfersPage } = require('../pages/TransfersPage');
  *   test('TC-MI-001 ...', async ({ metalInward }) => { ... });
  */
 const test = base.test.extend({
+  // AUTOMATIC for every test (QA lead, 16-09-2026): after each successful
+  // save the app must show its "Saved successfully" toast. A save without the
+  // toast is flagged as a BUG - annotation in the report + soft failure. See
+  // utils/save-toast-guard.js (SAVE_TOAST_GUARD=off|warn to relax).
+  saveToastGuard: [async ({ page }, use, testInfo) => {
+    const guard = attachSaveToastGuard(page);
+    await use(guard);
+    await guard.finish();
+    reportSaveToastMisses(testInfo, guard);
+  }, { auto: true }],
+
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
   },
