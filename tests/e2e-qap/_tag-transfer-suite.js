@@ -181,7 +181,7 @@ const ENTITIES = { Metal: METAL_ENTITY, Brand: BRAND_ENTITY, Stone: STONE_ENTITY
 /**
  * @param {{title:string, tc:string, stateFile:string, destinationBU:string,
  *   destinationLabel?:string, entity?:'Metal'|'Brand'|'Stone',
- *   stopAfterTransferOut?:boolean}} cfg
+ *   stopAfterTransferOut?:boolean, stopAfterTransferProcess?:boolean}} cfg
  */
 function registerTagTransferSuite(cfg) {
   const { title, tc, stateFile, destinationBU } = cfg;
@@ -290,6 +290,10 @@ function registerTagTransferSuite(cfg) {
       expect(acc, 'tagwise transfer accepted (not skipped)').not.toBe('skipped');
       console.log('Barcoded stock moved to Transfer process and accepted (Tagwise)');
     });
+
+    // cfg.stopAfterTransferProcess: only seed the tag into the Transfer process
+    // (steps 01-05); the caller registers its own transfer-out variant(s)
+    if (cfg.stopAfterTransferProcess) return;
 
     test(`${tc}-06 transfer out to ${destLabel} (Tag Number)`, async ({ loginPage, transfers, page }) => {
       test.setTimeout(600_000);

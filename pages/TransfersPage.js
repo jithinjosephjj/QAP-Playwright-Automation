@@ -55,7 +55,7 @@ class TransfersPage extends StockInwardBasePage {
 
   /** Transfer Out a tag to another BU. Returns the save-response body. */
   async transferOut({
-    destination = 'Aluva', transactionMode = 'Stock', itemType = 'Metal', groupCategory = 'Gold',
+    destination = 'Aluva', transferMode = 'Confirmed', transactionMode = 'Stock', itemType = 'Metal', groupCategory = 'Gold',
     fromProcess = 'Lot FVHK', fromTransactionType = 'Internal Stock Transfer', tag,
   }) {
     await this.open();
@@ -63,7 +63,9 @@ class TransfersPage extends StockInwardBasePage {
     await this.addBtn.click({ timeout: 30_000 });
     await this.page.waitForTimeout(2_000);
 
-    await this.pickByLabelText('Transfer Mode', /^\s*Confirmed\s*$/);
+    // Transfer Mode: "Confirmed" (default) or "Provisional" (a provisional
+    // receipt that is later confirmed with Transaction Mode "Provisional RC")
+    await this.pickByLabelText('Transfer Mode', new RegExp(`^\\s*${transferMode}\\s*$`));
     await this.pickByLabelText('Destination Business Unit', new RegExp(destination));
     await this.pickByLabelText('Transaction Mode', new RegExp(`^\\s*${transactionMode}\\s*$`));
     await this.pickByLabelText('Item Type', new RegExp(`^\\s*${itemType}\\s*$`));
@@ -157,6 +159,72 @@ class TransfersPage extends StockInwardBasePage {
       : this.page.locator('.ng-dropdown-panel .ng-option').filter({ hasNotText: /No items found|Type to search/i }).first();
     await opt.click({ timeout: 10_000 });
     await this.page.waitForTimeout(1_500);
+  }
+
+  /**
+   * CONFIRMED Transfer Out that confirms a PROVISIONAL receipt (probed on qap
+   * 17-09-2026): Transfer Mode Confirmed -> Destination -> Transaction Mode
+   * "ProvisionalRC" (one word in the option list) -> Item Type -> a
+   * "Provisional RC" select lists the provisional transfer numbers (TTT##) ->
+   * pick ours -> its item(s) load -> select them (or scan the tag when a tag
+   * box is offered) -> Submit.
+   */
+  async transferOutProvisionalRc({ destination = 'Palakkad', itemType = 'Metal', provisionalNo, tag }) {
+    await this.open();
+    await this.openTab('Transfer Out');
+    await this.addBtn.click({ timeout: 30_000 });
+    await this.page.waitForTimeout(2_000);
+
+    await this.pickByLabelText('Transfer Mode', /^\s*Confirmed\s*$/);
+    await this.pickByLabelText('Destination Business Unit', new RegExp(destination));
+    await this.pickByLabelText('Transaction Mode', /^\s*Provisional\s*RC\s*$/i);
+    await this.pickByLabelText('Item Type', new RegExp(`^\\s*${itemType}\\s*$`));
+    await this.waitForIdle();
+    await this.page.waitForTimeout(1_500);
+    // the provisional receipt number (ours, else the first offered)
+    const rcRe = provisionalNo ? new RegExp(provisionalNo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : /./;
+    await this.pickByLabelText('Provisional RC', rcRe, { timeout: 15_000 });
+    await this.waitForIdle();
+    await this.page.waitForTimeout(2_500);
+
+    // tag box (if the build asks to scan) - otherwise select the loaded item rows
+    const box = this.page.locator('app-sioniq-input input, input[placeholder*="tag" i]').locator('visible=true').first();
+    if (tag && (await box.isVisible({ timeout: 2_000 }).catch(() => false))) {
+      await box.fill(String(tag));
+      const addBtn = this.page.locator('button').filter({ hasText: /^\s*Add\s*$/ }).locator('visible=true').first();
+      if (!(await addBtn.click({ timeout: 5_000, force: true }).then(() => true).catch(() => false))) await box.press('Enter').catch(() => {});
+      await this.page.waitForTimeout(2_000);
+    }
+    const boxes = this.page.locator('[id^="item-"], #selectall, table tbody tr input[type="checkbox"]').locator('visible=true');
+    const n = await boxes.count();
+    for (let i = 0; i < n; i++) {
+      const cb = boxes.nth(i);
+      if (!(await cb.isChecked().catch(() => false))) await cb.check({ force: true }).catch(() => {});
+    }
+    const addSel = this.page.getByRole('button', { name: /Add Selected to Transfer/i }).locator('visible=true').last();
+    if (await addSel.isVisible({ timeout: 3_000 }).catch(() => false)) { await addSel.click(); await this.waitForIdle(); await this.page.waitForTimeout(2_000); }
+    const rows = (await this.page.locator('table tbody tr').allInnerTexts()).map((r) => r.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    console.log(`provisional RC ${provisionalNo}: ${n} selectable row(s); grid: ${JSON.stringify(rows.slice(0, 3))}`);
+
+    const resp = this.page.waitForResponse(
+      (r) => ['POST', 'PUT'].includes(r.request().method()) && /transfer|create|save/i.test(r.url()) && !/\/Get[A-Z]|GetAll|Pagination|KeepAlive|GetMasterData|Translation|List|Search/i.test(r.url()),
+      { timeout: 60_000 },
+    ).catch(() => null);
+    const submit = this.page.locator('button').filter({ hasText: /^\s*Submit\s*$/ }).locator('visible=true').last();
+    await submit.scrollIntoViewIfNeeded().catch(() => {});
+    await submit.click({ timeout: 15_000, force: true });
+    await this.page.waitForTimeout(1_500);
+    const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm/i }).getByRole('button', { name: /Yes|Ok|Confirm/i }).locator('visible=true').last();
+    if (await confirm.isVisible({ timeout: 3_000 }).catch(() => false)) await confirm.click().catch(() => {});
+    const r = await resp;
+    if (!r) {
+      const toast = (await this.page.locator('.toast-container, #toast-container, .toast, [role="alert"]').locator('visible=true').allInnerTexts().catch(() => [])).join(' | ');
+      throw new Error(`Provisional RC transfer out fired no save request - form silently blocked; toast: "${toast}"`);
+    }
+    const body = await r.json().catch(() => null);
+    console.log('provisional RC transfer out save:', r.status(), r.url().split('/').slice(-1)[0], JSON.stringify(body).slice(0, 250));
+    if (r.status() >= 400 || (body && body.errorCode)) throw new Error(`Provisional RC transfer out rejected (HTTP ${r.status()}): ${body ? body.error || body.message || '' : ''}`);
+    return body;
   }
 
   /**
