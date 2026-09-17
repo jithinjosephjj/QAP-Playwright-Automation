@@ -4,7 +4,7 @@
       "C:\\Program Files\\nodejs\\node.exe",
       "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "tests/sales",
+      "tests/e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec",
       "--headed",
       "project=chromium"
     ],
@@ -112,21 +112,180 @@
   },
   "suites": [
     {
-      "title": "sales\\b2b-order-booking-add.noauth.spec.js",
-      "file": "sales/b2b-order-booking-add.noauth.spec.js",
+      "title": "e2e-qap\\b2b-sample-inhouse-production-workflow.noauth.spec.js",
+      "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "B2B Order Booking - add record",
-          "file": "sales/b2b-order-booking-add.noauth.spec.js",
-          "line": 27,
+          "title": "B2B Sample - Inhouse Job Work at Cochin PU - Sample back to Kakkanad [qap]",
+          "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+          "line": 87,
           "column": 6,
           "specs": [
             {
-              "title": "TC-B2B-001 add and submit a B2B metal order",
-              "ok": false,
+              "title": "TC-QSIP-01 Kakkanad: create the B2B order WITH a sample",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 600000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 116795,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Add Files: image attached and dialog closed\n"
+                        },
+                        {
+                          "text": "Add Files: image attached and dialog closed\n"
+                        },
+                        {
+                          "text": "Add Sample panel: sample listed under Items Added\n"
+                        },
+                        {
+                          "text": "  toast ok after save: OrderBooking/CreateOrderBooking (receipt BBB15) -> \"Saved successfully!\" | \"Done Saved successfully!\"\n"
+                        },
+                        {
+                          "text": "order submit fired: POST https://qap.sioniq.com/sioniq/OrderBooking/CreateOrderBooking | POST https://qap.sioniq.com/sioniq/PrintAndBarcodeBuilder/GetPrintTemplateByConfiguration\n"
+                        },
+                        {
+                          "text": "order submit responses: [{\"status\":200,\"url\":\"https://qap.sioniq.com/sioniq/OrderBooking/CreateOrderBooking\",\"body\":{\"code\":1001,\"message\":\"Saved successfully!\",\"header\":\"Done\",\"data\":{\"orderBookingID\":\"e4ee00ae-7447-4ffa-9cac-979a92e18eca\",\"receiptNo\":\"BBB15\",\"status\":false}},\"payload\":\"{\\\"status\\\":true,\\\"orderBookingID\\\":\\\"3fa85f64-5717-4562-b3fc-2c963f66afa6\\\",\\\"receiptNo\\\":\\\"ONZ9EX\\\",\\\"receiptSerialNo\\\":230602,\\\"vend\n"
+                        },
+                        {
+                          "text": "order submit diag: {\"toast\":\"\",\"invalidNg\":[\"purposeType\",\"customer\",\"itemType\",\"makingType\",\"smcode\",\"salesExecutive\",\"deliveryNote\",\"referenceType\"]}\n"
+                        },
+                        {
+                          "text": "B2B sample order created at Kakkanad: BBB15\n"
+                        },
+                        {
+                          "text": "latest sample no: 0DBEJ7 (row: 1 0DBEJ7 B2B Order Metal 12 12 0)\n"
+                        },
+                        {
+                          "text": "Sample registered as: 0DBEJ7\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-16T11:10:48.806Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-feab424e5a125bf7eaf2",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-02 Kakkanad: inhouse job work from the order, production unit Cochin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 600000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 57593,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "inhouse job work save: \u001b[33m200\u001b[39m {\"code\":1001,\"message\":\"Saved successfully!\",\"header\":\"Done\",\"data\":{\"jobWorkID\":\"f4d4b282-c672-4ac8-a61d-64dbc5c674d0\",\"receiptNo\":\"TTT11\",\"receiptSerialNo\":11,\"masterDataValueID_JobWorkGenerationTyp\n"
+                        },
+                        {
+                          "text": "  toast ok after save: ProcurementJobWork/CreateJobWork (receipt TTT11) -> \"Saved successfully!\" | \"Done Saved successfully!\"\n"
+                        },
+                        {
+                          "text": "print preview: no Preview button offered - skipping\n"
+                        },
+                        {
+                          "text": "Inhouse job work created for BBB15 -> production unit Cochin: TTT11\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-16T11:12:49.530Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-78fc650f8adcf4c9963a",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 149,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-03 Kakkanad: sample issue inhouse to production unit Cochin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 600000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 61880,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Add Files: image attached and dialog closed\n"
+                        },
+                        {
+                          "text": "sample save: \u001b[33m200\u001b[39m CreateSample {\"code\":1001,\"message\":\"Saved successfully!\",\"header\":\"Done\",\"data\":{\"sampleIssueID\":\"d211be8a-f472-485f-9ea4-abfb1d785dd7\",\"masterDataValueID_JobWorkMode\":\"4874526e-032a-406d-a2f2-30b4481cd261\",\"vendorID\":null,\"productionUnitID\":\"01a0a80a-042a-4bb6-\n"
+                        },
+                        {
+                          "text": "  toast ok after save: SampleIssue/CreateSample -> \"Saved successfully!\" | \"Done Saved successfully!\"\n"
+                        },
+                        {
+                          "text": "Sample 0DBEJ7 issued inhouse to Cochin (doc: keyed by sample no)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-16T11:13:47.261Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-a269e72b171e646dea94",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 165,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-04 Cochin: assign the JOB WORK to Casting Process XM2N",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -139,90 +298,38 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 72426,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Ajin G\"\u001b[39m\nReceived: \u001b[31m\"Sioniquser1\"\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Ajin G\"\u001b[39m\nReceived: \u001b[31m\"Sioniquser1\"\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js:59:8",
-                        "location": {
-                          "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js",
-                          "column": 8,
-                          "line": 59
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 58 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39mselectValue(\u001b[32m'salesExecutive'\u001b[39m)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m       \u001b[33m.\u001b[39mtoBe(\u001b[32m'Ajin G'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 61 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39msummaryText()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n \u001b[90m 62 |\u001b[39m       \u001b[33m.\u001b[39mtoMatch(\u001b[35m/Customer Name\\s*:\\s*Luxurio/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
+                      "status": "passed",
+                      "duration": 42672,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "location": {
-                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js",
-                            "column": 8,
-                            "line": 59
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Ajin G\"\u001b[39m\nReceived: \u001b[31m\"Sioniquser1\"\u001b[39m\n\nCall Log:\n- Timeout 20000ms exceeded while waiting on the predicate\n\n\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 58 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39mselectValue(\u001b[32m'salesExecutive'\u001b[39m)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m       \u001b[33m.\u001b[39mtoBe(\u001b[32m'Ajin G'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m     \u001b[36mawait\u001b[39m expect\n \u001b[90m 61 |\u001b[39m       \u001b[33m.\u001b[39mpoll(\u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m b2bOrderBooking\u001b[33m.\u001b[39msummaryText()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20\u001b[39m_000 })\n \u001b[90m 62 |\u001b[39m       \u001b[33m.\u001b[39mtoMatch(\u001b[35m/Customer Name\\s*:\\s*Luxurio/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js:59:8\u001b[22m"
+                          "text": "job assignment save: \u001b[33m200\u001b[39m {\"code\":1001,\"message\":\"Saved successfully!\",\"header\":\"Done\",\"data\":[{\"transactionRefernceID\":\"94aa703a-6cb0-412f-8a00-7772cdd139af\",\"transactionLineRefernceID\":null,\"receiptNo\":\"BBB45\"}]}\n"
+                        },
+                        {
+                          "text": "  toast ok after save: ProductionJobAssign/CreateProductionJobAssign -> \"Saved successfully!\" | \"Done Saved successfully!\"\n"
+                        },
+                        {
+                          "text": "Job work TTT11 assigned to Casting Process XM2N / Casting Inspection XM2N\n"
                         }
                       ],
-                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-09-15T05:07:58.415Z",
+                      "startTime": "2026-09-16T11:14:49.257Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-b2b-order-booking-ad-77d5f-nd-submit-a-B2B-metal-order-no-auth\\trace.zip"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\b2b-order-booking-add.noauth.spec.js",
-                        "column": 8,
-                        "line": 59
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
-              "id": "b706ef11badf2a05cc5a-f34677e6c2eb80e67ccb",
-              "file": "sales/b2b-order-booking-add.noauth.spec.js",
-              "line": 28,
+              "id": "b131fc3c0777f99794db-fec00c10b6659509ee6c",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 184,
               "column": 3
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "sales\\order-booking-add.noauth.spec.js",
-      "file": "sales/order-booking-add.noauth.spec.js",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Order Booking - add record",
-          "file": "sales/order-booking-add.noauth.spec.js",
-          "line": 27,
-          "column": 6,
-          "specs": [
+            },
             {
-              "title": "TC-OB-001 add and submit a metal stock order",
-              "ok": false,
+              "title": "TC-QSIP-05 Cochin: assign the SAMPLE to Casting Process XM2N",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -233,70 +340,270 @@
                   "projectName": "no-auth",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 18016,
-                      "error": {
-                        "message": "Error: process date read from the header\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m",
-                        "stack": "Error: process date read from the header\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\n    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js:43:63",
-                        "location": {
-                          "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js",
-                          "column": 63,
-                          "line": 43
+                      "status": "passed",
+                      "duration": 90198,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "assignJob: business unit pick skipped (TimeoutError: locator.waitFor: Timeout 15000ms exceeded.)\n"
                         },
-                        "snippet": "\u001b[0m \u001b[90m 41 |\u001b[39m     \u001b[90m// \"23/06/2026\"), i.e. the login/business date - NOT the real system clock\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[36mconst\u001b[39m deliveryDate \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mprocessDate()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 43 |\u001b[39m     expect(deliveryDate\u001b[33m,\u001b[39m \u001b[32m'process date read from the header'\u001b[39m)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 44 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`process (delivery) date: ${deliveryDate}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mopenAddWizard()\u001b[33m;\u001b[39m\u001b[0m"
+                        {
+                          "text": "job assignment save: \u001b[33m200\u001b[39m {\"code\":1001,\"message\":\"{0} Saved Successfully!\",\"header\":\"Done\",\"data\":[{\"transactionRefernceID\":\"ee0a5895-2c20-4952-96c0-b7efef1a126d\",\"transactionLineRefernceID\":null,\"receiptNo\":\"BBB46\"}]}\n"
+                        },
+                        {
+                          "text": "  toast ok after save: ProductionJobAssign/CreateSampleAssign -> \"{0} Saved Successfully!\" | \"Done Sample Job Assignment created successfully.\"\n"
+                        },
+                        {
+                          "text": "Sample 0DBEJ7 assigned to Casting Process XM2N / Casting Inspection XM2N\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-16T11:15:32.024Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-489701eca5df11670c8f",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 200,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-06 Cochin: process movement accept for the job work and the sample",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 600000,
+                  "annotations": [
+                    {
+                      "type": "BUG",
+                      "description": "BUG: \"Saved successfully\" toast not shown after save (1 of 1 saves): ProductionProcessMovementAccept/CreateProductionProcessMovementAcceptSample (receipt DDD16) -> \"Accepted\""
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 684771,
+                      "error": {
+                        "message": "\u001b[31mTearing down \"saveToastGuard\" exceeded the test timeout of 600000ms.\u001b[39m",
+                        "stack": "\u001b[31mTearing down \"saveToastGuard\" exceeded the test timeout of 600000ms.\u001b[39m"
                       },
                       "errors": [
                         {
+                          "message": "\u001b[31mTearing down \"saveToastGuard\" exceeded the test timeout of 600000ms.\u001b[39m"
+                        },
+                        {
                           "location": {
-                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js",
-                            "column": 63,
-                            "line": 43
+                            "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\utils\\save-toast-guard.js",
+                            "column": 55,
+                            "line": 92
                           },
-                          "message": "Error: process date read from the header\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\n\n\u001b[0m \u001b[90m 41 |\u001b[39m     \u001b[90m// \"23/06/2026\"), i.e. the login/business date - NOT the real system clock\u001b[39m\n \u001b[90m 42 |\u001b[39m     \u001b[36mconst\u001b[39m deliveryDate \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mprocessDate()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 43 |\u001b[39m     expect(deliveryDate\u001b[33m,\u001b[39m \u001b[32m'process date read from the header'\u001b[39m)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/^\\d{2}\\/\\d{2}\\/\\d{4}$/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 44 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`process (delivery) date: ${deliveryDate}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m orderBooking\u001b[33m.\u001b[39mopenAddWizard()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js:43:63\u001b[22m"
+                          "message": "Error: BUG: \"Saved successfully\" toast not shown after save (1 of 1 saves): ProductionProcessMovementAccept/CreateProductionProcessMovementAcceptSample (receipt DDD16) -> \"Accepted\"\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"ProductionProcessMovementAccept/CreateProductionProcessMovementAcceptSample (receipt DDD16) -> \\\"Accepted\\\"\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39m..\\utils\\save-toast-guard.js:92\n\n\u001b[0m \u001b[90m 90 |\u001b[39m   testInfo\u001b[33m.\u001b[39mannotations\u001b[33m.\u001b[39mpush({ type\u001b[33m:\u001b[39m \u001b[32m'BUG'\u001b[39m\u001b[33m,\u001b[39m description\u001b[33m:\u001b[39m msg })\u001b[33m;\u001b[39m\n \u001b[90m 91 |\u001b[39m   console\u001b[33m.\u001b[39mlog(msg)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 92 |\u001b[39m   \u001b[36mif\u001b[39m (mode \u001b[33m!==\u001b[39m \u001b[32m'warn'\u001b[39m) expect\u001b[33m.\u001b[39msoft(guard\u001b[33m.\u001b[39mmisses\u001b[33m,\u001b[39m msg)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 93 |\u001b[39m }\n \u001b[90m 94 |\u001b[39m\n \u001b[90m 95 |\u001b[39m module\u001b[33m.\u001b[39mexports \u001b[33m=\u001b[39m { attachSaveToastGuard\u001b[33m,\u001b[39m reportSaveToastMisses\u001b[33m,\u001b[39m \u001b[33mTOAST_SELECTOR\u001b[39m }\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at reportSaveToastMisses (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\utils\\save-toast-guard.js:92:55)\u001b[22m\n\u001b[2m    at Object.base.test.extend.saveToastGuard.auto (D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\fixtures\\test-fixtures.js:46:5)\u001b[22m"
                         }
                       ],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "processMovementAccept: nothing pending at Casting Process XM2N for TTT11 - already accepted, skipping\n"
+                        },
+                        {
+                          "text": "Process movement accepted for job work TTT11\n"
+                        },
+                        {
+                          "text": "  BUG: success toast NOT shown within 8s after save: ProductionProcessMovementAccept/CreateProductionProcessMovementAcceptSample (receipt DDD16) -> \"Accepted\"\n"
+                        },
+                        {
+                          "text": "Process movement accepted for sample 0DBEJ7\n"
+                        },
+                        {
+                          "text": "BUG: \"Saved successfully\" toast not shown after save (1 of 1 saves): ProductionProcessMovementAccept/CreateProductionProcessMovementAcceptSample (receipt DDD16) -> \"Accepted\"\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-09-15T05:09:18.320Z",
-                      "annotations": [],
+                      "startTime": "2026-09-16T11:17:02.281Z",
+                      "annotations": [
+                        {
+                          "type": "BUG",
+                          "description": "BUG: \"Saved successfully\" toast not shown after save (1 of 1 saves): ProductionProcessMovementAccept/CreateProductionProcessMovementAcceptSample (receipt DDD16) -> \"Accepted\""
+                        }
+                      ],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\video.webm"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\e2e-qap-b2b-sample-inhouse-e557d-the-job-work-and-the-sample-no-auth\\test-failed-1.png"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\error-context.md"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\e2e-qap-b2b-sample-inhouse-e557d-the-job-work-and-the-sample-no-auth\\error-context.md"
                         },
                         {
                           "name": "trace",
                           "contentType": "application/zip",
-                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\sales-order-booking-add.no-90cea--submit-a-metal-stock-order-no-auth\\trace.zip"
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\e2e-qap-b2b-sample-inhouse-e557d-the-job-work-and-the-sample-no-auth\\trace.zip"
                         }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\tests\\sales\\order-booking-add.noauth.spec.js",
-                        "column": 63,
-                        "line": 43
-                      }
+                      ]
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "89af8f7f5e3a4876a2ed-27125b3f5bad87c84b30",
-              "file": "sales/order-booking-add.noauth.spec.js",
-              "line": 28,
+              "id": "b131fc3c0777f99794db-f6ef24e550aa94e98841",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-07 Cochin: worker issue + receipt for the JOB WORK (Sioniquser1, move to Job Finalize)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 900000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "interrupted",
+                      "duration": 182883,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "workerIssue: no pending row for TTT11 - already issued, skipping\n"
+                        },
+                        {
+                          "text": "workerReceipt: process \"Casting Process XM2N\" has nothing pending - already received, skipping\n"
+                        },
+                        {
+                          "text": "Worker issue + receipt done for job work TTT11 (moved to Job Finalize)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-16T11:28:37.279Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\e2e-qap-b2b-sample-inhouse-98375-user1-move-to-Job-Finalize--no-auth\\video.webm"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\e2e-qap-b2b-sample-inhouse-98375-user1-move-to-Job-Finalize--no-auth\\test-failed-1.png"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\OneDrive - Sioniq Tech Private Limited\\QAP Automation\\Playwright Automation\\test-results\\e2e-qap-b2b-sample-inhouse-98375-user1-move-to-Job-Finalize--no-auth\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-96247eefbcf43d1bd8c3",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 227,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-08 Cochin: worker issue + receipt for the SAMPLE (Sioniquser1, Finalize Sample)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-ec88afb31eb1a1ac5d15",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 238,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-09 Cochin: job finalize -> generate barcode for the job work",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-1f28b24fb2d9f41369ff",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 250,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-10 Cochin: sample receipt (Receipt page, Sample tab, inhouse)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-e4ad6d141dd8b4130a0d",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 261,
+              "column": 3
+            },
+            {
+              "title": "TC-QSIP-11 Kakkanad: sample delivery to the customer",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "no-auth",
+                  "projectName": "no-auth",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b131fc3c0777f99794db-54cdcb0cbac1681607f9",
+              "file": "e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+              "line": 290,
               "column": 3
             }
           ]
@@ -306,11 +613,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-15T05:07:57.199Z",
-    "duration": 102531.17899999999,
-    "expected": 0,
-    "skipped": 0,
-    "unexpected": 2,
+    "startTime": "2026-09-16T11:10:47.479Z",
+    "duration": 1255664.022,
+    "expected": 5,
+    "skipped": 5,
+    "unexpected": 1,
     "flaky": 0
   }
 }

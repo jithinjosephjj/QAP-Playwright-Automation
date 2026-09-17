@@ -1,5 +1,6 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { uniqueRef, businessDate } = require('../../utils/unique');
+const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
  * TC-E2E-001 — Stone Inward: Stock + Direct without Tare, add record
@@ -97,6 +98,7 @@ test.describe('Stone Inward - add record', () => {
     expect(stoneAmount).toBeCloseTo(rateWeight * rate, 1);
 
     // ---- Step 31: Add Items ----
+    await stoneInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image (Demo files folder) when Add Files is offered
     await stoneInward.addItemBtn.click();
     // (the Stone summary prints "Vendor Name :RAJA" - colon spacing varies per tab)
     await expect

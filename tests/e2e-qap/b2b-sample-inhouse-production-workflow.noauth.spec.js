@@ -73,6 +73,7 @@ const DATA = {
     purity: '22 Karat', // qap caption (QA shows "(22 Karat Gold)")
     weight: '5.000',
     moveToJobFinalize: true,
+    image: DEMO_FILES.image3, // the receipt item form offers Add Files
   },
   delivery: { customer: 'Celestia Jewels P', itemType: 'Metal', dispatchType: 'Our Employee', employee: 'Sioniquser1' },
 };

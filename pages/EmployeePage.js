@@ -75,6 +75,37 @@ class EmployeePage extends StockInwardBasePage {
     await this.pick('employmentType', 'Permanent');
     await this.fillDate(this.doj, '01/06/2026');
   }
+
+  /**
+   * Employee document block (qap 16-09-2026: "Document Type" + "Upload File"
+   * + "Add Document"). Best-effort: picks the first document type, sets the
+   * hidden file input directly (no native picker), clicks Add Document.
+   * Returns false when the form has no upload control.
+   */
+  async addDocumentIfOffered(filePath) {
+    const files = this.page.locator('input[type="file"]');
+    if (!(await files.count())) {
+      console.log('Employee: no document upload on this form - nothing attached');
+      return false;
+    }
+    const docType = this.page
+      .locator('xpath=//*[contains(normalize-space(text()),"Document Type")]/following::ng-select[1]')
+      .locator('visible=true').first();
+    if (await docType.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      await docType.locator('.ng-select-container').click();
+      const opt = this.page.locator('.ng-dropdown-panel .ng-option').filter({ hasNotText: /No items found/i }).first();
+      if (await opt.isVisible({ timeout: 5_000 }).catch(() => false)) await opt.click();
+      else await this.page.keyboard.press('Escape');
+      await this.page.waitForTimeout(500);
+    }
+    await files.last().setInputFiles(filePath);
+    await this.page.waitForTimeout(1_000);
+    const add = this.page.getByRole('button', { name: /Add Document/i }).locator('visible=true').first();
+    if (await add.isVisible({ timeout: 3_000 }).catch(() => false)) await add.click();
+    await this.page.waitForTimeout(1_200);
+    console.log('Employee: demo document attached (Add Document)');
+    return true;
+  }
 }
 
 module.exports = { EmployeePage };

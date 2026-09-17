@@ -1,5 +1,6 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { uniqueRef, businessDate } = require('../../utils/unique');
+const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
  * TC-BUI-001 — Bullion Inward: add record on the single-screen form through
@@ -90,6 +91,9 @@ test.describe('Bullion Inward - add record', () => {
         );
       }, { timeout: 60_000, message: 'pricing chain never settled into a consistent state' })
       .toBeLessThan(0.05);
+
+    // ---- demo image via the form's Add Files control (Demo files folder) ----
+    await bullionInward.attachDemoImageIfOffered(DEMO_FILES.image1);
 
     // ---- Add Items (verified - the click is a silent no-op on invalid forms) ----
     // No Additional Charges on qap - straight to Add Items.

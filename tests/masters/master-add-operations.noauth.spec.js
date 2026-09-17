@@ -1,3 +1,4 @@
+const { DEMO_FILES } = require('../../utils/demo-files');
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { nextSioniqUser, commit } = require('../../utils/sioniquser');
 
@@ -30,6 +31,9 @@ async function createEmployee(employeePage, u) {
   await employeePage.open();
   await employeePage.openAddWizard();
   await employeePage.fillEmployee(u);
+  // demo document (Demo files folder) when the form offers Upload File - best-effort
+  await employeePage.addDocumentIfOffered(DEMO_FILES.image1)
+    .catch((e) => console.log('employee document skipped:', String(e).split(/\r?\n/)[0]));
   const response = await employeePage.submit();
   expect(response).toBeTruthy();
   expect(response.message).toMatch(/saved successfully/i);

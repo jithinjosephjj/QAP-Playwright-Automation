@@ -238,6 +238,26 @@ imports `test` from `fixtures/test-fixtures` gets it with no changes:
 
 `SAVE_TOAST_GUARD=warn` reports without failing; `SAVE_TOAST_GUARD=off` disables.
 
+## Demo images on every "Add Files" screen
+
+QA-lead rule (16-09-2026): every screen that offers an **Add Files** control
+gets a demo image from the `Demo files folder` (utils/demo-files.js resolves
+`DEMO_FILES.image1/2/3`; fixtures/assets are the fallback). Page objects use
+`attachDemoImageIfOffered(file)` - it attaches only when the button is present
+and logs when it is not. The upload dialog is titled "Upload Files" /
+"Upload Documents" and commits with "Add File" (qap) or "Add Image" (QA);
+`attachFileViaAddFiles` accepts all of them.
+
+Wired in: Metal / Brand / Stone inward (standalone specs and the tag-transfer
+chains), Bullion Inward, Alloy Inward, Order Booking, B2B Order Booking (item
+block; sample panel), Sample Issue (item panel), Worker Receipt (item form),
+Customer Registration (Aadhar document), Employee (document block).
+
+`DEMO_ATTACH=off` skips the attachments. Saving an inward WITH an attachment
+needs the client's FTP / storage settings for that functionality type - on
+qap (16-09-2026) Metal and Stone inward saves returned HTTP 501 "FTP settings
+not found for Functionality Type" until configured (Brand and Bullion saved).
+
 ## Checklist for every NEW add-operation spec
 
 Mandatory (QA lead directive) — every new page's add spec includes all of these:

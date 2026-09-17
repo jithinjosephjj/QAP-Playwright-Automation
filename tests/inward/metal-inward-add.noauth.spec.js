@@ -1,6 +1,7 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { uniqueRef } = require('../../utils/unique');
 const env = require('../../utils/env');
+const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
  * TC-MI-001 — Metal Inward: Stock / Direct / Invoice, single item, add record
@@ -99,6 +100,7 @@ test.describe('Metal Inward - add record', () => {
     expect(await metalInward.numberOf('Making Charges')).toBeGreaterThan(0);
 
     // ---- Step 47: Add Item ----
+    await metalInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image (Demo files folder) when Add Files is offered
     await metalInward.addItemBtn.click();
     await expect
       .poll(async () => metalInward.summaryText(), { timeout: 20_000 })

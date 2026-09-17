@@ -1,5 +1,6 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { uniqueRef } = require('../../utils/unique');
+const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
  * TC-AI-001 — Alloy Inward: add record on the single-screen form through
@@ -76,6 +77,7 @@ test.describe('Alloy Inward - add record', () => {
       .toBeLessThan(0.05);
 
     // ---- Add Item ----
+    await alloyInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image (Demo files folder) via Add Files
     await alloyInward.addItemBtn.click();
     await alloyInward.waitForIdle();
 

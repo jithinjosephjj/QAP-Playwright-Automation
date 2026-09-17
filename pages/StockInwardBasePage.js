@@ -274,13 +274,19 @@ class StockInwardBasePage extends BasePage {
     // Grid refreshes and keep-alives are POSTs too - never count them as the
     // save. And the QA server can take >60s on master-data saves.
     const noise = /GetAll|Pagination|KeepAlive|GetMasterData|GetLocation/i;
+    // accept ANY status so a rejected save surfaces as a clear error instead
+    // of a 120s timeout (seen 16-09-2026 on qap with an attached image)
     const resp = this.page.waitForResponse(
-      (r) => pattern.test(r.url()) && !noise.test(r.url()) && r.request().method() === 'POST' && r.status() === 200,
+      (r) => pattern.test(r.url()) && !noise.test(r.url()) && r.request().method() === 'POST',
       { timeout: 120_000 },
     );
     await this.submitBtn.click();
     const r = await resp;
-    return r.json().catch(() => null);
+    const body = await r.json().catch(() => null);
+    if (r.status() >= 400 || (body && body.errorCode)) {
+      throw new Error(`${this.tabName} save rejected (HTTP ${r.status()} ${r.url().split('/').slice(-1)[0]}): ${JSON.stringify(body).slice(0, 400)}`);
+    }
+    return body;
   }
 
   /** The RC / voucher number shown on the post-submit Print dialog (e.g. M137). */
@@ -312,23 +318,48 @@ class StockInwardBasePage extends BasePage {
     const btn = last ? btns.last() : btns.first();
     await btn.scrollIntoViewIfNeeded();
     await btn.click();
+    // dialog title differs per screen: "Upload Files" / "Upload Documents" / "Upload Images"
     const dlg = this.page
       .locator('[role="dialog"], .modal, ngb-modal-window, .offcanvas')
-      .filter({ hasText: 'Upload Files' })
+      .filter({ hasText: /Upload (Files?|Documents?|Images?)/i })
       .last();
     await dlg.waitFor({ state: 'visible', timeout: 15_000 });
 
     await dlg.locator('input[type="file"]').first().setInputFiles(filePath);
     await this.page.waitForTimeout(1_500);
 
-    const addImage = dlg.getByRole('button', { name: 'Add Image' });
+    // commit button caption differs per client: "Add Image" (QA) / "Add File" (qap)
+    const addImage = dlg.getByRole('button', { name: /^\s*(Add Image|Add Files?|Add Documents?|Upload)\s*$/i }).last();
     await addImage.waitFor({ state: 'visible', timeout: 15_000 });
     await addImage.click();
     await this.page.waitForTimeout(1_500);
+    const uploaded = await dlg.locator('img, .uploaded, li, tr').filter({ hasNotText: /No images available/i }).count().catch(() => 0);
 
     await dlg.getByRole('button', { name: 'Close' }).last().click();
     await dlg.waitFor({ state: 'hidden', timeout: 15_000 }).catch(() => {});
-    console.log('Add Files: image attached and dialog closed');
+    console.log(`Add Files: image attached (${filePath.split(/[\\/]/).pop()}) and dialog closed${uploaded ? '' : ' - NOTE: dialog listed no uploaded file'}`);
+  }
+
+  /**
+   * Best-effort variant: attach only when the screen offers an "Add Files"
+   * control (QA lead, 16-09-2026: every page that has Add Files gets a demo
+   * image from the Demo files folder). Returns true when attached, false
+   * when the control is absent on this screen/step.
+   */
+  async attachDemoImageIfOffered(filePath, { last = false } = {}) {
+    // DEMO_ATTACH=off skips every demo attachment (e.g. while the FTP /
+    // storage settings for a functionality type are not configured yet)
+    if ((process.env.DEMO_ATTACH || 'on').toLowerCase() === 'off') {
+      console.log('Add Files: skipped (DEMO_ATTACH=off)');
+      return false;
+    }
+    const btn = this.page.getByRole('button', { name: 'Add Files' }).locator('visible=true');
+    if (!(await btn.first().isVisible({ timeout: 2_000 }).catch(() => false))) {
+      console.log('Add Files: not offered on this screen - nothing attached');
+      return false;
+    }
+    await this.attachFileViaAddFiles(filePath, { last });
+    return true;
   }
 
   /**

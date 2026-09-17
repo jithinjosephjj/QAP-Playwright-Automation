@@ -1,5 +1,6 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { businessDate } = require('../../utils/unique');
+const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
  * TC-B2B-001 — B2B Order Booking: add an order through Order Details →
@@ -71,6 +72,9 @@ test.describe('B2B Order Booking - add record', () => {
       purity: '91.60',
       grossWeight: 50,
     });
+
+    // ---- demo image on the item block via Add Files (Demo files folder) ----
+    await b2bOrderBooking.attachDemoImageIfOffered(DEMO_FILES.image1);
 
     // ---- Add Items (verified via the B2B Order Summary panel) ----
     await b2bOrderBooking.addItemsAndVerify(1);

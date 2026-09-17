@@ -1,6 +1,7 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { makeState } = require('../../utils/e2e-state');
 const { uniqueInvoiceNo } = require('../../utils/unique');
+const { DEMO_FILES } = require('../../utils/demo-files'); // Demo files folder images for Add Files
 
 /**
  * Shared builder for the qap "process wise" TAG TRANSFER family: a jewellery tag
@@ -58,6 +59,7 @@ const METAL_ENTITY = {
       entryMode: 'SINGLE TAG', referenceType: 'Combination', article: 'Tendulkar',
       purity: '91.60', noOfPcs: 1, grossWeightWithTare: 100, rate: 6000,
     });
+    await metalInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image when the item step offers Add Files
     await metalInward.addItemBtn.click();
     await metalInward.waitForIdle();
     await metalInward.nextBtn.click();
@@ -91,6 +93,7 @@ const BRAND_ENTITY = {
       vendor: this.vendor, purchaseType: 'Direct', costCenter: 'Kakkanad',
       inwardType: 'Stock', purchaser: 'Sioniquser1', invoiceNo,
     });
+    await brandInward.attachDemoImageIfOffered(DEMO_FILES.image1); // Brand step 1 offers Add Files
     await brandInward.nextBtn.click();
     await brandInward.waitForIdle();
     await brandInward.fillItem({
@@ -98,6 +101,7 @@ const BRAND_ENTITY = {
       brand: this.brand, article: 'Tendulkar', purity: '91.60', noOfPcs: 1,
       grossWeight: 25, mrp: 50000, discountPercent: 0,
     });
+    await brandInward.attachDemoImageIfOffered(DEMO_FILES.image2);
     await brandInward.addItemBtn.click();
     await brandInward.waitForIdle();
     // Brand is a 2-step wizard - a second Next may not exist; click if present.
@@ -145,6 +149,7 @@ const STONE_ENTITY = {
     // Shape ('value') is mandatory and NOT back-filled by the article - set it
     await stoneInward.pick('value', 'Cushion', { exact: true }).catch(() => {});
     await stoneInward.waitForIdle();
+    await stoneInward.attachDemoImageIfOffered(DEMO_FILES.image1);
     // stage the item ("Add Items", plural)
     await page.getByRole('button', { name: /^\s*Add Items?\s*$/ }).locator('visible=true').last().click({ timeout: 15_000 }).catch(() => {});
     await stoneInward.waitForIdle();

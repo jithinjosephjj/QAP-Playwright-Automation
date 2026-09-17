@@ -1,5 +1,6 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { uniqueRef } = require('../../utils/unique');
+const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
  * TC-BRIN-001 — Brand Inward: add record end-to-end through the 2-step wizard
@@ -93,6 +94,7 @@ test.describe('Brand Inward - add record', () => {
 
     // ---- Add Item: the summary panel is the proof it was accepted ----
     // (a rejected Add Item just flags fields ng-invalid with no toast)
+    await brandInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image (Demo files folder) when Add Files is offered
     await brandInward.addItemBtn.click();
     await expect
       .poll(async () => brandInward.summaryText(), { timeout: 20_000 })
