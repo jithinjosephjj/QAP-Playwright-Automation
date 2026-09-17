@@ -276,6 +276,7 @@ class StockInwardBasePage extends BasePage {
     const noise = /GetAll|Pagination|KeepAlive|GetMasterData|GetLocation/i;
     // accept ANY status so a rejected save surfaces as a clear error instead
     // of a 120s timeout (seen 16-09-2026 on qap with an attached image)
+    await this.fillPureRateIfAsked();
     const resp = this.page.waitForResponse(
       (r) => pattern.test(r.url()) && !noise.test(r.url()) && r.request().method() === 'POST',
       { timeout: 120_000 },
@@ -287,6 +288,32 @@ class StockInwardBasePage extends BasePage {
       throw new Error(`${this.tabName} save rejected (HTTP ${r.status()} ${r.url().split('/').slice(-1)[0]}): ${JSON.stringify(body).slice(0, 400)}`);
     }
     return body;
+  }
+
+  /**
+   * "Pure Rate" block on the Review & Submit step (appeared on qap 17-09-2026:
+   * one rate input per group category, e.g. "Pure Rate / Gold"). Submit is a
+   * silent no-op while it is empty, so fill every empty, enabled rate input
+   * with `rate` (default 6000 - the rate used by the inward specs).
+   */
+  async fillPureRateIfAsked(rate = this.defaultPureRate || 6000) {
+    const heading = this.page.getByText(/^\s*Pure Rate\s*$/).locator('visible=true');
+    if (!(await heading.first().isVisible({ timeout: 1_500 }).catch(() => false))) return 0;
+    const inputs = heading.first().locator('xpath=following::input[not(@type="checkbox")][position()<=3]').locator('visible=true');
+    let filled = 0;
+    const n = await inputs.count();
+    for (let i = 0; i < n; i++) {
+      const inp = inputs.nth(i);
+      if (!(await inp.isEnabled().catch(() => false))) continue;
+      const val = (await inp.inputValue().catch(() => '')).trim();
+      if (val && Number(val.replace(/,/g, '')) > 0) continue;
+      await inp.fill(String(rate));
+      await inp.blur().catch(() => {});
+      filled += 1;
+    }
+    if (filled) console.log(`Pure Rate: filled ${filled} empty rate input(s) with ${rate} on the Review step`);
+    await this.page.waitForTimeout(800);
+    return filled;
   }
 
   /** The RC / voucher number shown on the post-submit Print dialog (e.g. M137). */

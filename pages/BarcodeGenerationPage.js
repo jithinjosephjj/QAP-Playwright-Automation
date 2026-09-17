@@ -152,7 +152,13 @@ class BarcodeGenerationPage extends StockInwardBasePage {
     const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm|proceed|generate/i }).getByRole('button', { name: /Yes|Ok|Confirm|Submit|Proceed|Generate/i }).locator('visible=true').last();
     if (await confirm.isVisible({ timeout: 3_000 }).catch(() => false)) { await confirm.click().catch(() => {}); console.log('barcode: confirmed dialog'); }
     const r = await resp;
-    if (!r) throw new Error(`Barcode Submit fired no save - invalid: ${JSON.stringify(await this.invalidControls())}`);
+    if (!r) {
+      // surface the app's own reason (e.g. 17-09-2026: "Please configure
+      // Wastage/Making before generating the barcode." - a vendor setup gap)
+      const toast = (await this.page.locator('.toast-container, #toast-container, .toast, [role="alert"]').locator('visible=true').allInnerTexts().catch(() => []))
+        .map((t) => t.replace(/\s+/g, ' ').trim()).filter(Boolean).join(' | ');
+      throw new Error(`Barcode Submit fired no save - app says: "${toast || 'no toast'}"; invalid: ${JSON.stringify(await this.invalidControls())}`);
+    }
     const body = await r.json().catch(() => null);
     console.log('barcode save:', r.status(), r.url().split('/').slice(-1)[0], JSON.stringify(body).slice(0, 400));
     if (r.status() >= 400 || (body && body.errorCode)) throw new Error(`Barcode save rejected (HTTP ${r.status()}): ${body ? body.error || body.message || '' : ''}`);

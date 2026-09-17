@@ -26,7 +26,9 @@ const { expect } = require('@playwright/test');
 const TOAST_TIMEOUT_MS = 8_000;
 const SAVE_URL = /Create|Save|Submit|Accept|Update|Generate|Register|Finalize|Approve|Confirm/i;
 // endpoints that look like saves but are lookups / computations
-const NOT_A_SAVE = /GetAll|Pagination|Search|List|KeepAlive|GetMasterData|Translation|Login|GenerateTax|GetPrint|Preview|Validate|Check|Calculate/i;
+// (any "/Get..." action is a lookup even when it contains Accept/Transfer,
+// e.g. InternalStockAcceptV2/GetInternalStockAcceptTransferredRecords)
+const NOT_A_SAVE = /\/Get[A-Z]|GetAll|Pagination|Search|List|KeepAlive|GetMasterData|Translation|Login|GenerateTax|GetPrint|Preview|Validate|Check|Calculate/i;
 const SUCCESS_TEXT = /saved|success|done|created|accepted|submitted|generated|updated|registered/i;
 
 // toast / alert containers seen across the app (ngx-toastr, bootstrap, sweetalert)
