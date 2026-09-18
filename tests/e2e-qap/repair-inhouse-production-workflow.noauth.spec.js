@@ -4,7 +4,7 @@ const { businessDate } = require('../../utils/unique');
 const { DEMO_FILES } = require('../../utils/demo-files');
 
 /**
- * E2E WORKFLOW (qap) — B2B REPAIR / INHOUSE PRODUCTION AT COCHIN / DELIVERY.
+ * E2E WORKFLOW (qap) — REPAIR / INHOUSE PRODUCTION AT COCHIN / DELIVERY.
  * qap port of tests/e2e/b2b-repair-inhouse-production-workflow (QA lead,
  * 18-09-2026): same chain, qap process names ("XM2N" suffix, single Casting
  * round), qap masters (customer Celestia Jewels P, SM code EEEE1, worker
@@ -12,7 +12,7 @@ const { DEMO_FILES } = require('../../utils/demo-files');
  *
  *   Kakkanad HO   TC-QRPI-01  Repair Registration (customer item, Add Files image)
  *                 TC-QRPI-02  Repair Issue INHOUSE -> Production Unit Cochin
- *   Cochin (PU)   TC-QRPI-03  Job Assignment (source "Repair", business type B2B)
+ *   Cochin (PU)   TC-QRPI-03  Job Assignment (source "Repair", Business Type filter B2B)
  *                             -> Casting Process XM2N / Casting Inspection XM2N
  *                 TC-QRPI-04  Process Movement accept
  *                 TC-QRPI-05  Worker Issue + Receipt (Sioniquser1) - the receipt
@@ -26,7 +26,7 @@ const { DEMO_FILES } = require('../../utils/demo-files');
  *
  * Grids key repair rows by the repair-number CORE (save returns a prefixed
  * number while grids display "REP-<core>.1"). State:
- * e2e-qap-b2b-repair-inhouse-state.json. MUST run headed.
+ * e2e-qap-repair-inhouse-state.json. MUST run headed.
  *
  * RUN 18-09-2026 (repair GGGG4): 01-06 green (registration GGGG4, issue
  * HHHH4, assignment BBB50, movement DDD21, worker issue RRR18 / receipt
@@ -36,7 +36,7 @@ const { DEMO_FILES } = require('../../utils/demo-files');
  * added the Repair-mode transfer back to Kakkanad (TC-07/08) before the
  * delivery (TC-09).
  */
-const state = makeState('e2e-qap-b2b-repair-inhouse-state.json');
+const state = makeState('e2e-qap-repair-inhouse-state.json');
 const KAKKANAD = { bu: 'Kakkanad' };
 const COCHIN = { bu: 'Cochin' };
 
@@ -77,7 +77,7 @@ function rowKey() {
   return repairNo ? String(repairNo).replace(/^[A-Za-z]+-/, '') : '';
 }
 
-test.describe('B2B Repair - Inhouse Production at Cochin PU - Delivery at Kakkanad [qap]', () => {
+test.describe('Repair - Inhouse Production at Cochin PU - Delivery at Kakkanad [qap]', () => {
   test('TC-QRPI-01 Kakkanad: register the repair for the customer', async ({ loginPage, repairWorkflow, page }) => {
     test.setTimeout(600_000);
     state.reset(); // a new registration starts a new chain
