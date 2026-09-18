@@ -25,6 +25,11 @@ module.exports = defineConfig({
   retries: process.env.CI ? 1 : 0,
 
   use: {
+    // Headed by default: the Device Radar gate needs the local agent on
+    // 127.0.0.1:5151 and fails in a headless shell, so every login-based spec
+    // must run headed (VS Code runs included). Opt into headless explicitly
+    // with SIONIQ_HEADLESS=1 for pages that need no login.
+    headless: process.env.SIONIQ_HEADLESS === '1',
     baseURL: env.URL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

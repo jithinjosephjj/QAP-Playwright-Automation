@@ -118,6 +118,10 @@ QA environment is `qa.sioniq.com`.
 ---
 
 ## Commands
+Runs are **headed by default** (`headless: process.env.SIONIQ_HEADLESS === '1'` in
+`playwright.config.js`) - the Device Radar gate fails in a headless shell, so a
+plain `npx playwright test ...` or a VS Code run opens a browser. Headless is
+opt-in for login-free pages only: `SIONIQ_HEADLESS=1 npx playwright test ...`.
 
 ```bash
 npm run test:ui
