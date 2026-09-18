@@ -40,8 +40,8 @@ const CLIENTS = {
       department: 'Production',
       designation: 'QA Level Desig S1KL',
       level: 'L1',
-      process: 'Casting Process XM2N',
-      subprocess: 'Casting Inspection XM2N',
+      process: 'Stone Setting XM2N', // Kakkanad + Production + S1KL/L1 offers only this (QA lead, 18-09-2026)
+      subprocess: 'Stone Setting Inspection XM2N', // sub processes offered: Stone Issue / Stone Setting Inspection / Stone Sorting XM2N
       floor: 'Floor 1',
       zip: '500016TS',
     },

@@ -30,6 +30,9 @@ async function login(loginPage, page) {
 async function createEmployee(employeePage, u) {
   await employeePage.open();
   await employeePage.openAddWizard();
+  // profile picture from the Demo files folder (profile.jpeg) - best-effort
+  await employeePage.setProfilePhoto(DEMO_FILES.profile)
+    .catch((e) => console.log('employee profile photo skipped:', String(e).split(/\r?\n/)[0]));
   await employeePage.fillEmployee(u);
   // demo document (Demo files folder) when the form offers Upload File - best-effort
   await employeePage.addDocumentIfOffered(DEMO_FILES.image1)
