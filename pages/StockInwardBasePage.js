@@ -287,6 +287,13 @@ class StockInwardBasePage extends BasePage {
     if (r.status() >= 400 || (body && body.errorCode)) {
       throw new Error(`${this.tabName} save rejected (HTTP ${r.status()} ${r.url().split('/').slice(-1)[0]}): ${JSON.stringify(body).slice(0, 400)}`);
     }
+    // Give the UI a moment to render its success toast before the caller
+    // navigates away (master specs reload the list right after saving, which
+    // would destroy a late toast and make the save-toast guard report a BUG
+    // that is really a test-timing artefact).
+    await this.page.locator('.toast-container, #toast-container, .toast, [role="alert"]')
+      .filter({ hasText: /saved|success/i }).first()
+      .waitFor({ state: 'visible', timeout: 4_000 }).catch(() => {});
     return body;
   }
 
@@ -340,8 +347,8 @@ class StockInwardBasePage extends BasePage {
    * Files controls at once (order form + a sample/item panel) - last:true
    * targets the newest visible one.
    */
-  async attachFileViaAddFiles(filePath, { last = false } = {}) {
-    const btns = this.page.getByRole('button', { name: 'Add Files' }).locator('visible=true');
+  async attachFileViaAddFiles(filePath, { last = false, buttonName = 'Add Files' } = {}) {
+    const btns = this.page.getByRole('button', { name: buttonName }).locator('visible=true');
     const btn = last ? btns.last() : btns.first();
     await btn.scrollIntoViewIfNeeded();
     await btn.click();

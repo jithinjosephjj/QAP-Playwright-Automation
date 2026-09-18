@@ -32,7 +32,7 @@ const NOT_A_SAVE = /\/Get[A-Z]|GetAll|Pagination|Search|List|KeepAlive|GetMaster
 const SUCCESS_TEXT = /saved|success|done|created|accepted|submitted|generated|updated|registered/i;
 
 // toast / alert containers seen across the app (ngx-toastr, bootstrap, sweetalert)
-const TOAST_SELECTOR = '.toast-container, #toast-container, .toast, .toastr, ngb-toast, [role="alert"], [role="status"], .swal2-popup, .alert-success, .notyf__toast';
+const TOAST_SELECTOR = '.toast-container, #toast-container, .toast, .toastr, ngb-toast, p-toast, p-toastitem, .p-toast-message, [role="alert"], [role="status"], .swal2-popup, .alert-success, .notyf__toast';
 
 function isSaveResponse(r, body) {
   if (!['POST', 'PUT', 'PATCH'].includes(r.request().method())) return false;
@@ -55,10 +55,17 @@ function attachSaveToastGuard(page) {
   const saves = [];
   const pending = [];
   const onResponse = (r) => {
+    // cheap pre-filter BEFORE touching the body: a streaming / long-poll
+    // response never completes and r.json() would hang the fixture teardown
+    const u = r.url();
+    if (!['POST', 'PUT', 'PATCH'].includes(r.request().method())) return;
+    if (!/\/sioniq\//i.test(u) || NOT_A_SAVE.test(u) || !SAVE_URL.test(u) || r.status() >= 400) return;
     const p = (async () => {
       let body = null;
-      try { body = await r.json(); } catch { return; }
-      if (!isSaveResponse(r, body)) return;
+      try {
+        body = await Promise.race([r.json(), new Promise((res) => setTimeout(() => res(null), 10_000))]);
+      } catch { return; }
+      if (!body || !isSaveResponse(r, body)) return;
       const what = describe(r, body);
       saves.push(what);
       const toast = page.locator(TOAST_SELECTOR).filter({ hasText: SUCCESS_TEXT }).locator('visible=true').first();
@@ -79,7 +86,8 @@ function attachSaveToastGuard(page) {
     saves,
     async finish() {
       page.off('response', onResponse);
-      await Promise.allSettled(pending);
+      // never let the teardown outlive the toast window + body read
+      await Promise.race([Promise.allSettled(pending), new Promise((res) => setTimeout(res, TOAST_TIMEOUT_MS + 12_000))]);
     },
   };
 }

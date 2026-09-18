@@ -125,6 +125,12 @@ class SmithPage extends StockInwardBasePage {
       throw new Error(`Smith save rejected (HTTP ${r.status()}): ${body ? body.error || JSON.stringify(body) : 'no body'}`);
     }
 
+    // let the success toast render before navigating to the list (the
+    // save-toast guard needs to see it; the list reload would destroy it)
+    await this.page.locator('.toast-container, #toast-container, .toast, p-toast, [role="alert"]')
+      .filter({ hasText: /saved|success/i }).first()
+      .waitFor({ state: 'visible', timeout: 4_000 }).catch(() => {});
+
     // Belt and braces: the record shows up in the Worker list.
     for (let i = 0; i < 5; i++) {
       await this.open();
