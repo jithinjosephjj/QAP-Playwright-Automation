@@ -228,6 +228,107 @@ class TransfersPage extends StockInwardBasePage {
   }
 
   /**
+   * Transfer Out with Transaction Mode "Repair" (probed on qap 18-09-2026):
+   * Transfer Mode -> Destination -> Transaction Mode Repair loads a
+   * "Repair Items" grid (Repair ID "REP-<no>.1") with every row PRE-SELECTED
+   * - keep only ours (rowText = repair number core) and Submit.
+   */
+  async transferOutRepair({ destination = 'Kakkanad', transferMode = 'Confirmed', rowText }) {
+    await this.open();
+    await this.openTab('Transfer Out');
+    await this.addBtn.click({ timeout: 30_000 });
+    await this.page.waitForTimeout(2_000);
+    await this.pickByLabelText('Transfer Mode', new RegExp(`^\\s*${transferMode}\\s*$`));
+    await this.pickByLabelText('Destination Business Unit', new RegExp(destination));
+    await this.pickByLabelText('Transaction Mode', /^\s*Repair\s*$/);
+    await this.waitForIdle();
+    await this.page.waitForTimeout(2_500);
+    await this.keepOnlyRow(rowText);
+
+    const body = await this.submitTransferForm('Repair transfer out');
+    return body;
+  }
+
+  /**
+   * Transfer In with Transaction Mode "Repair" at the receiving unit: From BU
+   * -> Transaction Mode Repair -> (Transfer Out ID when offered) -> the repair
+   * row -> receiver -> Accept.
+   */
+  async transferInRepair({ fromBU = 'Cochin', transferOutNo, rowText, receiver = 'JJ' }) {
+    await this.open();
+    await this.openTab('Transfer In');
+    await this.addBtn.click({ timeout: 30_000 });
+    await this.page.waitForTimeout(2_000);
+    await this.pickByLabelText('From Business Unit', new RegExp(fromBU));
+    await this.pickByLabelText('Transaction Mode', /^\s*Repair\s*$/);
+    await this.waitForIdle();
+    await this.page.waitForTimeout(1_500);
+    if (await this.selectByLabel('Transfer Out ID').isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await this.pickTransferOutId(transferOutNo);
+      await this.waitForIdle();
+      await this.page.waitForTimeout(2_500);
+    }
+    if (!(await this.page.locator('[id^="item-"], table tbody tr input[type="checkbox"]').first().isVisible({ timeout: 3_000 }).catch(() => false))) {
+      await this.page.getByRole('button', { name: /^\s*Search\s*$/ }).locator('visible=true').last().click({ timeout: 6_000 }).catch(() => {});
+      await this.waitForIdle();
+      await this.page.waitForTimeout(2_500);
+    }
+    await this.keepOnlyRow(rowText);
+    const rec = this.page.getByRole('textbox', { name: /Enter receiver name/i }).locator('visible=true').first();
+    if (await rec.isVisible({ timeout: 5_000 }).catch(() => false)) { await rec.click(); await rec.fill(String(receiver)); }
+    await this.page.waitForTimeout(800);
+    return this.submitTransferForm('Repair transfer in', { button: /^\s*Accept\s*$/ });
+  }
+
+  /** In a pre-filtered item grid, leave only the row containing rowText checked (or every row when rowText is absent/unmatched). */
+  async keepOnlyRow(rowText) {
+    const rows = this.page.getByRole('row').filter({ has: this.page.getByRole('checkbox') });
+    const n = await rows.count();
+    const esc = rowText ? String(rowText).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null;
+    let matched = 0;
+    if (esc) {
+      for (let i = 0; i < n; i++) {
+        if (new RegExp(esc, 'i').test(await rows.nth(i).innerText().catch(() => ''))) matched += 1;
+      }
+    }
+    for (let i = 0; i < n; i++) {
+      const row = rows.nth(i);
+      const cb = row.getByRole('checkbox').first();
+      const want = !matched || new RegExp(esc, 'i').test(await row.innerText().catch(() => ''));
+      const is = await cb.isChecked().catch(() => false);
+      if (want !== is) await cb.click({ force: true }).catch(() => {});
+    }
+    const texts = (await rows.allInnerTexts()).map((t) => t.replace(/\s+/g, ' ').trim().slice(0, 100));
+    console.log(`grid rows: ${JSON.stringify(texts.slice(0, 4))} -> ${matched ? `kept "${rowText}"` : 'kept all (no match)'}`);
+    await this.page.waitForTimeout(1_000);
+    if (rowText && !matched) throw new Error(`no grid row contains "${rowText}"`);
+  }
+
+  /** Click Submit/Accept, confirm if asked, capture and validate the save response. */
+  async submitTransferForm(what, { button = /^\s*Submit\s*$/ } = {}) {
+    const resp = this.page.waitForResponse(
+      (r) => ['POST', 'PUT'].includes(r.request().method()) && /transfer|create|save|accept/i.test(r.url()) && !/\/Get[A-Z]|GetAll|Pagination|KeepAlive|GetMasterData|Translation|List|Search/i.test(r.url()),
+      { timeout: 60_000 },
+    ).catch(() => null);
+    const btn = this.page.locator('button').filter({ hasText: button }).locator('visible=true').last();
+    await btn.scrollIntoViewIfNeeded().catch(() => {});
+    await btn.click({ timeout: 15_000, force: true });
+    await this.page.waitForTimeout(1_500);
+    const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm/i }).getByRole('button', { name: /Yes|Ok|Confirm|Accept/i }).locator('visible=true').last();
+    if (await confirm.isVisible({ timeout: 3_000 }).catch(() => false)) await confirm.click().catch(() => {});
+    const r = await resp;
+    if (!r) {
+      const toast = (await this.page.locator('.toast-container, #toast-container, .toast, [role="alert"]').locator('visible=true').allInnerTexts().catch(() => [])).join(' | ');
+      throw new Error(`${what} fired no save request - form silently blocked; toast: "${toast}"`);
+    }
+    const body = await r.json().catch(() => null);
+    console.log(`${what} save:`, r.status(), r.url().split('/').slice(-1)[0], JSON.stringify(body).slice(0, 250));
+    if (r.status() >= 400 || (body && body.errorCode)) throw new Error(`${what} rejected (HTTP ${r.status()}): ${body ? body.error || body.message || '' : ''}`);
+    await this.page.locator('.btn-light, .btn-close').last().click({ timeout: 4_000 }).catch(() => {});
+    return body;
+  }
+
+  /**
    * Rows of the list grid on a tab ("Transfer In" / "Transfer Out"), each as
    * one whitespace-normalised string, top row first. Optional `search` is
    * typed into the grid's search box first.

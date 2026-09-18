@@ -63,8 +63,29 @@ class RepairWorkflowPage extends StockInwardBasePage {
       { timeout: 120_000 },
     ).catch(() => null);
     await button.click();
-    const r = await resp;
-    if (!r) throw new Error('Submit fired no save request - form silently blocked');
+    // some builds confirm before saving
+    await this.page.waitForTimeout(1_500);
+    const confirm = this.page.locator('[role="dialog"], .modal, ngb-modal-window').filter({ hasText: /Are you sure|Confirm|proceed/i })
+      .getByRole('button', { name: /Yes|Ok|Confirm|Proceed/i }).locator('visible=true').last();
+    if (await confirm.isVisible({ timeout: 2_000 }).catch(() => false)) await confirm.click().catch(() => {});
+    // A blocking toast ("Setup required - Cannot submit ...") shows for a few
+    // seconds only - watch for it while the save response is awaited, so the
+    // error carries the app's reason instead of a bare "blocked" after 120s.
+    const toastSel = '.toast-container, #toast-container, .toast, [role="alert"], .swal2-popup';
+    let blocking = '';
+    const watcher = (async () => {
+      for (let i = 0; i < 24 && !blocking; i++) {
+        const texts = (await this.page.locator(toastSel).locator('visible=true').allInnerTexts().catch(() => []))
+          .map((t) => t.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        const bad = texts.find((t) => /setup required|cannot|required|not configured|error|fail|invalid/i.test(t) && !/saved successfully/i.test(t));
+        if (bad) blocking = bad;
+        else await this.page.waitForTimeout(500);
+      }
+    })();
+    const r = await Promise.race([resp, watcher.then(() => (blocking ? null : resp))]);
+    if (!r) {
+      throw new Error(`Submit fired no save request - form blocked; app says: "${blocking || 'no toast/dialog'}"`);
+    }
     const body = await r.json().catch(() => null);
     console.log('repair save:', r.status(), r.url().split('/').pop(), JSON.stringify(body).slice(0, 250));
     if (r.status() >= 400 || (body && body.errorCode)) {
