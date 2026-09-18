@@ -1,6 +1,5 @@
 const { test, expect } = require('../../fixtures/test-fixtures');
 const { makeState } = require('../../utils/e2e-state');
-const { registerTagTransferSuite } = require('./_tag-transfer-suite');
 
 /**
  * E2E WORKFLOW (qap / "process wise" client) — BRANCH-to-HO TAG TRANSFER
@@ -10,10 +9,11 @@ const { registerTagTransferSuite } = require('./_tag-transfer-suite');
  *   1  Login Palakkad branch (Admin/123/Palakkad) -> Transfers: Transfer OUT to Kakkanad HO
  *   2  Login Kakkanad HO (Admin/123/Kakkanad) -> Transfers: Transfer IN from Palakkad branch
  *
- * A branch can only send stock it already holds, so this spec first SEEDS a tag
- * into Palakkad by running the Kakkanad -> Palakkad chain (TC-BH-SEED-01..07,
- * shared builder), then reverses it (TC-BH-01..02). That keeps the case
- * self-contained and repeatable rather than depending on leftover stock.
+ * LINKED STATE (QA lead, 18-09-2026): no seed of its own any more - this flow
+ * moves the tag that ho-branch-tag-transfer-workflow (TC-HBT-01..07) landed
+ * at Palakkad, read from the shared e2e-metal-tag-journey-state.json. It runs
+ * only while that state says the tag is at Palakkad; afterwards the tag is at
+ * Kakkanad and a new HO-Branch run is needed for the next journey.
  *
  * Branch-side note (probed 14-09-2026): a branch transferring received stock has
  * NO From Process / From Transaction Type on the Transfer Out form - the tag is
@@ -23,7 +23,7 @@ const { registerTagTransferSuite } = require('./_tag-transfer-suite');
  * MUST run headed - see README (Device Radar gate + Local Network Access).
  */
 
-const STATE = 'e2e-branch-ho-tag-transfer-state.json';
+const STATE = 'e2e-metal-tag-journey-state.json';
 const state = makeState(STATE);
 const PALAKKAD = { bu: 'Palakkad' };
 const KAKKANAD = { bu: 'Kakkanad' };
@@ -35,21 +35,12 @@ async function loginAs(loginPage, page, creds) {
   await expect(page).not.toHaveURL(/\/login/, { timeout: 60_000 });
 }
 
-// --- Seed: land a fresh tag at Palakkad (Kakkanad HO -> Palakkad branch) ---
-registerTagTransferSuite({
-  title: 'Branch-HO Tag Transfer [qap] — seed: Kakkanad -> Palakkad',
-  tc: 'TC-BH-SEED',
-  stateFile: STATE,
-  destinationBU: 'Palakkad',
-  destinationLabel: 'Palakkad branch',
-});
-
-// --- Reverse: Palakkad branch -> Kakkanad HO ---
-test.describe('Branch-HO Tag Transfer (Palakkad -> Kakkanad) [qap]', () => {
+test.describe('Branch-HO Tag Transfer (Palakkad -> Kakkanad) [qap] — linked to HO-Branch', () => {
   test('TC-BH-01 transfer out from Palakkad branch to Kakkanad HO (Tag Number)', async ({ loginPage, transfers, page }) => {
     test.setTimeout(600_000);
-    const { tag } = state.readState();
-    expect(tag, 'run TC-BH-SEED-01..07 first (tag must be at Palakkad)').toBeTruthy();
+    const { tag, location } = state.readState();
+    expect(tag, 'no tag in e2e-metal-tag-journey-state.json - run HO-Branch (TC-HBT-01..07) first').toBeTruthy();
+    expect(location, `tag ${tag} is at "${location || 'unknown'}", not Palakkad - run HO-Branch (TC-HBT-01..07) to land a tag at Palakkad first`).toBe('Palakkad');
     await loginAs(loginPage, page, PALAKKAD);
 
     // Branch stock is not in a process - omit From Process / From Transaction Type.
@@ -62,14 +53,14 @@ test.describe('Branch-HO Tag Transfer (Palakkad -> Kakkanad) [qap]', () => {
     });
     expect(JSON.stringify(out)).toMatch(/success|saved|1001/i);
     const reverseOutNo = out && out.data && out.data.receiptNo;
-    state.writeState({ reverseOutNo });
+    state.writeState({ reverseOutNo, location: 'in transit Palakkad -> Kakkanad' });
     console.log(`Transfer Out from Palakkad to Kakkanad submitted for tag ${tag} (${reverseOutNo})`);
   });
 
   test('TC-BH-02 transfer in at Kakkanad HO (from Palakkad branch)', async ({ loginPage, transfers, page }) => {
     test.setTimeout(600_000);
     const { tag, reverseOutNo } = state.readState();
-    expect(tag, 'run TC-BH-01 first').toBeTruthy();
+    expect(reverseOutNo, 'run TC-BH-01 first').toBeTruthy();
     await loginAs(loginPage, page, KAKKANAD);
 
     const inn = await transfers.transferIn({
@@ -78,10 +69,11 @@ test.describe('Branch-HO Tag Transfer (Palakkad -> Kakkanad) [qap]', () => {
       stockSourceType: 'TagWise',
       itemType: 'Metal',
       groupCategory: 'Gold',
-      transferOutNo: reverseOutNo, // the OOO-series receipt from TC-BH-01
+      transferOutNo: reverseOutNo, // the receipt from TC-BH-01
       receiver: 'JJ',
     });
     expect(JSON.stringify(inn)).toMatch(/success|saved|1001|accept/i);
-    console.log(`Transfer In accepted at Kakkanad for tag ${tag} - Branch-HO chain complete`);
+    state.writeState({ location: 'Kakkanad', reverseInNo: inn && inn.data && inn.data.receiptNo });
+    console.log(`Transfer In accepted at Kakkanad for tag ${tag} - Branch-HO chain complete (tag now at Kakkanad)`);
   });
 });

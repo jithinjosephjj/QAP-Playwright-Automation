@@ -14,13 +14,19 @@ const { registerTagTransferSuite } = require('./_tag-transfer-suite');
  *   6  Transfer OUT to Palakkad branch (Scan type = Tag Number)
  *   7  Login Palakkad branch (Admin/123/Palakkad) -> Transfer IN from Kakkanad
  *
- * Identical to the HO-to-HO variant except the destination is the Palakkad
- * branch. Shared implementation in ./_tag-transfer-suite.js. MUST run headed.
+ * LINKED STATE (QA lead, 18-09-2026): this flow is the SEED of one tag journey.
+ * Its state file e2e-metal-tag-journey-state.json is shared with
+ *   branch-ho-tag-transfer-workflow     (Palakkad -> Kakkanad) and
+ *   branch-branch-tag-transfer-workflow (Palakkad -> Cochin),
+ * which move THIS tag on instead of seeding their own. The state's
+ * `location` says where the tag is (Palakkad after TC-HBT-07); only one of
+ * the two reverse legs can run per tag - run this flow again for a new tag.
+ * Shared implementation in ./_tag-transfer-suite.js. MUST run headed.
  */
 registerTagTransferSuite({
   title: 'HO-Branch Tag Transfer (Kakkanad -> Palakkad) [qap]',
   tc: 'TC-HBT',
-  stateFile: 'e2e-ho-branch-tag-transfer-state.json',
+  stateFile: 'e2e-metal-tag-journey-state.json',
   destinationBU: 'Palakkad',
   destinationLabel: 'Palakkad branch',
 });

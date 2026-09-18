@@ -336,7 +336,10 @@ function registerTagTransferSuite(cfg) {
         receiver: 'JJ',
       });
       expect(JSON.stringify(inn)).toMatch(/success|saved|1001|accept/i);
-      console.log(`Transfer In accepted at ${destLabel} for tag ${tag} - chain complete`);
+      // where the tag now physically is - the linked reverse flows
+      // (branch-ho / branch-branch) read this to know they may move it on
+      state.writeState({ location: destinationBU, transferInNo: inn && inn.data && inn.data.receiptNo });
+      console.log(`Transfer In accepted at ${destLabel} for tag ${tag} - chain complete (tag now at ${destinationBU})`);
     });
   });
 }

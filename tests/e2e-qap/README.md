@@ -24,3 +24,19 @@ npm run test:qap       # whole suite against qap (tests/e2e is auto-ignored)
 
 The active client comes from `SIONIQ_CLIENT` in `.env` (see `utils/env.js`);
 `playwright.config.js` ignores the other clients' e2e folders automatically.
+
+## Linked Metal tag journey (18-09-2026)
+
+The four Metal direction flows share one tag where a tag can physically flow:
+
+| Spec | Direction | State file |
+|---|---|---|
+| `ho-ho-tag-transfer-workflow` | Kakkanad HO -> Aluva HO | `e2e-ho-ho-tag-transfer-state.json` (own tag) |
+| `ho-branch-tag-transfer-workflow` | Kakkanad HO -> Palakkad (SEED) | `e2e-metal-tag-journey-state.json` |
+| `branch-ho-tag-transfer-workflow` | Palakkad -> Kakkanad | same file - moves the seeded tag |
+| `branch-branch-tag-transfer-workflow` | Palakkad -> Cochin | same file - moves the seeded tag |
+
+The shared state carries `location` (written by every Transfer In). The two
+reverse flows run only while `location` is `Palakkad`; only one of them can
+take a given tag, so run HO-Branch again for the next journey. The Brand and
+Stone variants still seed their own tags (per-entity state files).
