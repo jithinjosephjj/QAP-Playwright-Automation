@@ -22,9 +22,10 @@ const { registerTagTransferSuite } = require('./_tag-transfer-suite');
  *     Source Type = Process; a tag received through Transfer In sits in the
  *     Transfer FVHK process under From Transaction Type "InterStockAccept".
  *   - A branch Transfer Out has no From Process / From Transaction Type.
- *   - KNOWN APP BUG: transfers originating at COCHIN are never offered to the
- *     receiving unit's Transfer In (Palakkad lists only Kakkanad) - leg 3's
- *     Transfer In fails until fixed, and leg 4 waits on it.
+ *   - Cochin-origin transfers were not offered to the receiver's Transfer In
+ *     until 19-09-2026 (Palakkad listed only Kakkanad); the full loop went
+ *     green that afternoon (tag 26/06/0100009: TTT18/AAAA5, TTTT5/AAAA7,
+ *     TTTT8/AAAA4, TTTT5/AAAA5).
  */
 
 const STATE = 'e2e-metal-tag-journey-state.json';
@@ -127,11 +128,10 @@ function registerLeg3() {
       console.log(`Transfer Out from Cochin to Palakkad submitted for tag ${tag} (${leg3OutNo})`);
     });
 
-    // KNOWN APP BUG (14-09 / 19-09-2026): transfers that ORIGINATE AT COCHIN are
-    // never offered to the receiving unit - Palakkad's Transfer In lists only
-    // "Kakkanad" under From Business Unit although the confirmed Cochin ->
-    // Palakkad Transfer Out is Submitted. Left asserting so it turns green once
-    // fixed; leg 4 waits on it.
+    // History: on 14-09 and the morning of 19-09-2026 transfers originating at
+    // Cochin were not offered to the receiving unit (Palakkad's From Business
+    // Unit listed only Kakkanad). On the 19-09 afternoon run this step went
+    // GREEN (TTTT8 received at Palakkad), so the defect appears fixed on qap.
     test('TC-BB-02 transfer in at Palakkad branch (from Cochin branch)', async ({ loginPage, transfers, page }) => {
       test.setTimeout(600_000);
       const { tag, leg3OutNo } = state.readState();

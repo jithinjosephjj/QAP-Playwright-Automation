@@ -58,7 +58,7 @@ class BarcodeGenerationPage extends StockInwardBasePage {
    * Generate a barcode tag from a lot. Returns the generated tag number.
    * @param {string} [lotNo] specific Lot No to consume; falls back to the latest.
    */
-  async generate({ itemType = 'Metal', vendor = 'Celestia Jewels P', lotNo, groupCategory = 'Gold', brand, amount, grossWeight = 10, stone } = {}) {
+  async generate({ itemType = 'Metal', vendor = 'Celestia Jewels P', lotNo, groupCategory = 'Gold', brand, amount, grossWeight = 10, pieces = 1, stone } = {}) {
     await this.open();
     await this.addBtn.click({ timeout: 30_000 });
     await this.select('masterDataValueID_JewelleryItemType').waitFor({ state: 'visible', timeout: 30_000 });
@@ -111,10 +111,20 @@ class BarcodeGenerationPage extends StockInwardBasePage {
     } else {
       // Brand tags carry a mandatory Brand Name (productBrandID)
       if (brand) await this.pick('productBrandID', brand, { search: true }).catch(() => this.pick('productBrandID', brand, { exact: true }).catch(() => {}));
+      // The lot serial back-fills Model/Article/Style/Subgroup ASYNCHRONOUSLY.
+      // Running the "fill what's empty" cascade before that lands picks the
+      // first Style (BANGALORE) and leaves Article empty, and the barcode's
+      // Wastage/Making lookup (keyed by article) then fails ("Please configure
+      // Wastage/Making", seen 19-09-2026). Wait for the back-fill first.
+      for (let i = 0; i < 24 && (await emptyOf('productArticleID')); i++) await this.page.waitForTimeout(500);
+      if (await emptyOf('productArticleID')) console.log('barcode: lot did not back-fill the Article within 12s - running the cascade');
       // article cascade - fill only what's still empty (lot may pre-fill some)
       if (await emptyOf('metalID')) await this.pick('metalID', groupCategory, { exact: true }).catch(() => {});
       for (const cn of ['productCategoryID', 'productSubCategoryID', 'productArticleID', 'purityID']) {
         if (await emptyOf(cn)) await this.pickFirst(cn).catch(() => {});
+      }
+      if (await emptyOf('productArticleID')) {
+        throw new Error('Barcode: Article is still empty after the lot back-fill and the cascade - Submit would fail the Wastage/Making lookup');
       }
       await this.pickFirst('masterDataValueID_VendorMakingType').catch(() => {});
       await this.pickFirst('masterDataValueID_VendorMakingOn').catch(() => {});
@@ -127,6 +137,19 @@ class BarcodeGenerationPage extends StockInwardBasePage {
       } else {
         const gw = this.page.locator('form').filter({ hasText: /Gross Weight Component/i }).locator('input[type="decimal"]').first();
         if (await gw.isVisible({ timeout: 4_000 }).catch(() => false)) { await gw.click(); await gw.fill(String(grossWeight)); await this.page.keyboard.press('Tab'); }
+      }
+    }
+    // Pieces: seen pre-filled with the per-gram MAKING RATE (150) on qap
+    // 19-09-2026 after the Wastage/Making config - "Pcs exceeds Lot Pcs"
+    // blocks Submit. Always set it to the tag's piece count explicitly.
+    const piecesInput = this.page.locator('xpath=//*[normalize-space(text())="Pieces"]/following::input[1]').locator('visible=true').first();
+    if (await piecesInput.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      const cur = (await piecesInput.inputValue().catch(() => '')).trim();
+      if (cur !== String(pieces)) {
+        await piecesInput.click();
+        await piecesInput.fill(String(pieces));
+        await this.page.keyboard.press('Tab');
+        console.log(`barcode: Pieces was "${cur}" - set to ${pieces}`);
       }
     }
     await this.page.waitForTimeout(1_000);
