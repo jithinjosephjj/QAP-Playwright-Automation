@@ -193,6 +193,7 @@ function registerTagTransferSuite(cfg) {
   test.describe(title, () => {
     test(`${tc}-01 ${entity.name.toLowerCase()} inward at Kakkanad HO`, async ({ loginPage, metalInward, brandInward, stoneInward, page }) => {
       test.setTimeout(600_000);
+      state.reset(); // a new inward starts a new chain - drop the previous tag's numbers/location
       await loginAs(loginPage, page, KAKKANAD);
       const { inwardNo, invoiceNo } = await entity.doInward({ metalInward, brandInward, stoneInward, page });
       state.writeState({ inwardNo, invoiceNo });

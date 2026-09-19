@@ -1,0 +1,33 @@
+{
+  "name": "sioniq-qap-playwright-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sioniq qap Playwright E2E suite (headed; SIONIQ_CLIENT from .env)",
+  "scripts": {
+    "test": "playwright test --grep-invert metal-tag-journey",
+    "test:ui": "playwright test --ui",
+    "test:qap": "playwright test --grep-invert metal-tag-journey",
+    "e2e:qap": "playwright test tests/e2e-qap --workers=1 --grep-invert metal-tag-journey",
+    "test:tag-transfer-suite": "playwright test tests/e2e-qap/metal-tag-journey.noauth.spec.js --workers=1",
+    "test:tag-journey": "playwright test tests/e2e-qap/metal-tag-journey.noauth.spec.js --workers=1",
+    "test:tag-journey:leg1": "playwright test tests/e2e-qap/ho-ho-tag-transfer-workflow.noauth.spec.js",
+    "test:tag-journey:leg2": "playwright test tests/e2e-qap/ho-branch-tag-transfer-workflow.noauth.spec.js",
+    "test:tag-journey:leg3": "playwright test tests/e2e-qap/branch-branch-tag-transfer-workflow.noauth.spec.js",
+    "test:tag-journey:leg4": "playwright test tests/e2e-qap/branch-ho-tag-transfer-workflow.noauth.spec.js",
+    "test:tag-return": "playwright test tests/e2e-qap/ho-branch-tag-return-workflow.noauth.spec.js tests/e2e-qap/brand-ho-branch-tag-return-workflow.noauth.spec.js tests/e2e-qap/stone-ho-branch-tag-return-workflow.noauth.spec.js --workers=1",
+    "test:provisional-rc": "playwright test tests/e2e-qap/ho-branch-provisional-rc-transfer-workflow.noauth.spec.js",
+    "test:sample-inhouse": "playwright test tests/e2e-qap/b2b-sample-inhouse-production-workflow.noauth.spec.js",
+    "test:repair-inhouse": "playwright test tests/e2e-qap/repair-inhouse-production-workflow.noauth.spec.js",
+    "test:repair-outsource": "playwright test tests/e2e-qap/repair-outsource-workflow.noauth.spec.js",
+    "test:masters": "playwright test tests/masters",
+    "test:inward": "playwright test tests/inward",
+    "test:sales": "playwright test tests/sales",
+    "test:load": "playwright test tests/load",
+    "report": "playwright show-report",
+    "report:load": "node tests/load/render-html-report.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "dotenv": "^16.6.1"
+  }
+}

@@ -127,6 +127,24 @@ opt-in for login-free pages only: `SIONIQ_HEADLESS=1 npx playwright test ...`.
 npm run test:ui
 ```
 
+### npm scripts (package.json, 19-09-2026)
+
+| Script | Runs |
+|---|---|
+| `npm run test:tag-transfer-suite` (alias `test:tag-journey`) | the Metal tag journey in order: Kakkanad->Aluva, Aluva->Cochin, Cochin->Palakkad, Palakkad->Kakkanad (one file, `tests/e2e-qap/metal-tag-journey.noauth.spec.js`) |
+| `npm run test:tag-journey:leg1..leg4` | a single leg (the leg checks the shared state's `location` first) |
+| `npm run test:tag-return` / `test:provisional-rc` | the return and Provisional RC transfer flows |
+| `npm run test:sample-inhouse` / `test:repair-inhouse` / `test:repair-outsource` | the qap production chains |
+| `npm run test:masters` / `test:inward` / `test:sales` / `test:load` | folder runs |
+| `npm run report` / `report:load` | Playwright HTML report / page-load HTML report |
+
+`SIONIQ_CLIENT` comes from `.env`; runs are headed by default (see above).
+Folder runs (`npm test`, `npm run e2e:qap`) exclude the journey file with
+`--grep-invert metal-tag-journey`, because it re-registers the four leg files'
+tests in order and would otherwise run them twice.
+In VS Code: open a terminal in the project folder and run the script, or use
+the NPM Scripts view (Explorer > NPM SCRIPTS) and click the play icon.
+
 | Command | What it does |
 |---|---|
 | `npm test` | Run everything |

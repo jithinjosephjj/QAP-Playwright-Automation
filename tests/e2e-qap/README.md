@@ -25,18 +25,18 @@ npm run test:qap       # whole suite against qap (tests/e2e is auto-ignored)
 The active client comes from `SIONIQ_CLIENT` in `.env` (see `utils/env.js`);
 `playwright.config.js` ignores the other clients' e2e folders automatically.
 
-## Linked Metal tag journey (18-09-2026)
+## Metal tag journey (QA lead, 18-09-2026)
 
-The four Metal direction flows share one tag where a tag can physically flow:
+One tag, one shared state file (`e2e-metal-tag-journey-state.json`), four legs
+in this order - every leg checks the state's `location` before moving the tag:
 
-| Spec | Direction | State file |
+| Leg | Spec | Direction |
 |---|---|---|
-| `ho-ho-tag-transfer-workflow` | Kakkanad HO -> Aluva HO | `e2e-ho-ho-tag-transfer-state.json` (own tag) |
-| `ho-branch-tag-transfer-workflow` | Kakkanad HO -> Palakkad (SEED) | `e2e-metal-tag-journey-state.json` |
-| `branch-ho-tag-transfer-workflow` | Palakkad -> Kakkanad | same file - moves the seeded tag |
-| `branch-branch-tag-transfer-workflow` | Palakkad -> Cochin | same file - moves the seeded tag |
+| 1 HO -> HO | `ho-ho-tag-transfer-workflow` (TC-HHT-01..07) | Kakkanad -> Aluva (creates the tag) |
+| 2 HO -> Branch | `ho-branch-tag-transfer-workflow` (TC-HBT-01..02) | Aluva -> Cochin (an HO is process-wise: the received tag sits in Transfer FVHK under From Transaction Type InterStockAccept) |
+| 3 Branch -> Branch | `branch-branch-tag-transfer-workflow` (TC-BB-01..02) | Cochin -> Palakkad |
+| 4 Branch -> HO | `branch-ho-tag-transfer-workflow` (TC-BH-01..02) | Palakkad -> Kakkanad |
 
-The shared state carries `location` (written by every Transfer In). The two
-reverse flows run only while `location` is `Palakkad`; only one of them can
-take a given tag, so run HO-Branch again for the next journey. The Brand and
-Stone variants still seed their own tags (per-entity state files).
+Run the whole loop with
+`SIONIQ_CLIENT=qap npx playwright test tests/e2e-qap/ho-ho-tag-transfer-workflow.noauth.spec.js tests/e2e-qap/ho-branch-tag-transfer-workflow.noauth.spec.js tests/e2e-qap/branch-branch-tag-transfer-workflow.noauth.spec.js tests/e2e-qap/branch-ho-tag-transfer-workflow.noauth.spec.js --workers=1`.
+The Brand and Stone variants still seed their own tags (per-entity state files).
