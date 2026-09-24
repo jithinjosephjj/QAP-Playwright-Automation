@@ -101,7 +101,7 @@ test.describe('Metal Inward - add record', () => {
 
     // ---- Step 47: Add Item ----
     await metalInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image (Demo files folder) when Add Files is offered
-    await metalInward.addItemBtn.click();
+    await metalInward.addItem(); // Add Item + Pure Rate block (UI change 24-09-2026)
     await expect
       .poll(async () => metalInward.summaryText(), { timeout: 20_000 })
       .toContain('No. of Pieces : 10');

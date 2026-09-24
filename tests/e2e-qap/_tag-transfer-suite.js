@@ -60,7 +60,7 @@ const METAL_ENTITY = {
       purity: '91.60', noOfPcs: 1, grossWeightWithTare: 100, rate: 6000,
     });
     await metalInward.attachDemoImageIfOffered(DEMO_FILES.image1); // demo image when the item step offers Add Files
-    await metalInward.addItemBtn.click();
+    await metalInward.addItem(); // Add Item + Pure Rate block (UI change 24-09-2026)
     await metalInward.waitForIdle();
     await metalInward.nextBtn.click();
     await metalInward.waitForIdle();

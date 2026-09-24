@@ -26,6 +26,11 @@ const { registerTagTransferSuite } = require('./_tag-transfer-suite');
  * every other ProvisionalRC transfer, e.g. the QA lead's TTTT8/TTTT6), and
  * Transaction Mode offers no ProvisionalRC - the confirmed item can not be
  * received. TC-HBPR-03 is left asserting so it turns green once fixed.
+ * RUN 24-09-2026 (tag 26/06/0100014): the bug is FIXED - full chain green
+ * (MMM68 -> FF149 -> LLL72 -> tag -> TTT27 provisional -> TTT28 confirmed ->
+ * Transfer In accepted at Palakkad). Same day UI changes: Metal Inward asks
+ * the Pure Rate under the item form after Add Item, and the Internal Transfer
+ * Stock Entity Type lists "Material" instead of "Metal" (page objects adapt).
  * MUST run headed.
  */
 const STATE = 'e2e-ho-branch-provisional-rc-state.json';
@@ -95,8 +100,8 @@ test.describe('HO-Branch PROVISIONAL RC transfer (Kakkanad -> Palakkad) [qap]', 
     console.log(`CONFIRMED transfer out (Provisional RC ${provisionalNo}) submitted for tag ${tag} (${transferOutNo})`);
   });
 
-  // KNOWN APP BUG (17-09-2026): the confirmed Provisional-RC transfer is not
-  // offered on the Palakkad Transfer In (Transfer Out ID: "No items found").
+  // 17-09-2026: the confirmed Provisional-RC transfer was not offered on the
+  // Palakkad Transfer In ("No items found"). Fixed by 24-09-2026 - passing.
   test('TC-HBPR-03 Palakkad: transfer in from Kakkanad HO', async ({ loginPage, transfers, page }) => {
     test.setTimeout(600_000);
     const { tag, transferOutNo } = state.readState();

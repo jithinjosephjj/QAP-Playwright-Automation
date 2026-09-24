@@ -72,7 +72,7 @@ test.describe('Metal Inward - Remodel - Workflow', () => {
     await metalInward.waitForIdle();
 
     await metalInward.fillItem(DATA.inward.item);
-    await metalInward.addItemBtn.click();
+    await metalInward.addItem(); // Add Item + Pure Rate block (UI change 24-09-2026)
     await metalInward.waitForIdle();
     await metalInward.nextBtn.click();
     await metalInward.waitForIdle();

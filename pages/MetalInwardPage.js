@@ -21,6 +21,12 @@ class MetalInwardPage extends StockInwardBasePage {
     this.noOfPcs = page.locator('#noOfPcs');
     this.makingCharges = page.locator('#makingCharges');
     this.remarks = page.locator('#remarks');
+
+    // "Pure Rate" block that appears UNDER the item form after Add Item (UI
+    // change seen 24-09-2026 on qap): one RATE input per metal, id
+    // "pureRate-<guid>". Next refuses ("Please enter Pure Rate for every
+    // metal.") until every one is filled.
+    this.pureRateInputs = page.locator('input[id^="pureRate-"]').locator('visible=true');
   }
 
   /**
@@ -80,7 +86,7 @@ class MetalInwardPage extends StockInwardBasePage {
     await this.page.waitForTimeout(2_500); // let the auto-fill settle
     const article = await this.selectValue('article');
     console.log(`jobwork item ${jobWorkItemNo} auto-filled article: ${article}`);
-    await this.addItemBtn.click();
+    await this.addItem();
     const deadline = Date.now() + 15_000;
     while (Date.now() < deadline) {
       if (!(await this.selectValue('jobWorkItemNo'))) return article;
@@ -147,7 +153,40 @@ class MetalInwardPage extends StockInwardBasePage {
 
     await this.noOfPcs.fill(String(noOfPcs));
     await this.fillByLabel('Gross Weight With Tare', grossWeightWithTare);
-    await this.fillByLabel('Rate', rate);
+    // Rate left the item form on 24-09-2026 - it is asked after Add Item now
+    // (see addItem). Older builds still show it here, so fill it when present.
+    if (rate !== undefined && await this.inputByLabel('Rate').isVisible({ timeout: 1_500 }).catch(() => false)) {
+      await this.fillByLabel('Rate', rate);
+    }
+    this.pendingRate = rate;
+  }
+
+  /**
+   * Add Item, then fill the Pure Rate block the new item step shows under
+   * the form. Builds that still take Rate on the form show no block, so a
+   * missing block is fine.
+   */
+  async addItem() {
+    await this.addItemBtn.click();
+    await this.fillPureRateBlock();
+  }
+
+  /** Fill every empty RATE input of the post-Add-Item Pure Rate block. */
+  async fillPureRateBlock(rate = this.pendingRate ?? this.defaultPureRate ?? 6000) {
+    if (!(await this.pureRateInputs.first().isVisible({ timeout: 5_000 }).catch(() => false))) return 0;
+    let filled = 0;
+    const n = await this.pureRateInputs.count();
+    for (let i = 0; i < n; i++) {
+      const inp = this.pureRateInputs.nth(i);
+      const val = (await inp.inputValue().catch(() => '')).trim();
+      if (val && Number(val.replace(/,/g, '')) > 0) continue;
+      await inp.fill(String(rate));
+      await inp.press('Tab').catch(() => inp.blur());
+      filled += 1;
+    }
+    await this.waitForIdle();
+    console.log(`Pure Rate block: filled ${filled}/${n} RATE input(s) with ${rate}`);
+    return filled;
   }
 }
 

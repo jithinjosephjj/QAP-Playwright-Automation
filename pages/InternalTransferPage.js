@@ -47,6 +47,34 @@ class InternalTransferPage extends StockInwardBasePage {
     return String(docNo).replace(/[^A-Za-z0-9]/g, '');
   }
 
+  /** Option texts of a wizard dropdown (opens it, reads, closes it). */
+  async optionsOf(controlname) {
+    await this.closeStalePanels();
+    await this.select(controlname).locator('.ng-select-container').click();
+    const opts = this.page.locator('.ng-dropdown-panel .ng-option').locator('visible=true');
+    await opts.first().waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
+    const all = (await opts.allTextContents()).map((s) => s.trim()).filter(Boolean);
+    await this.page.keyboard.press('Escape');
+    return all;
+  }
+
+  /**
+   * Stock Entity Type pick. On 24-09-2026 the qap Internal Transfer forms
+   * stopped offering "Metal" and list "Material" instead (QA lead: "select
+   * Material"), so when the requested entity is not an option and Material
+   * is, Material is picked. Brand/Stone still pick their own entry.
+   */
+  async pickStockEntity(controlname, wanted) {
+    const options = await this.optionsOf(controlname);
+    const exact = (o) => options.some((t) => t.toLowerCase() === String(o).toLowerCase());
+    if (exact(wanted)) return this.pick(controlname, wanted, { exact: true });
+    if (exact('Material')) {
+      console.log(`Stock Entity Type: "${wanted}" not offered ${JSON.stringify(options)} - picking "Material"`);
+      return this.pick(controlname, 'Material', { exact: true });
+    }
+    throw new Error(`Stock Entity Type "${wanted}" not offered and no "Material" fallback; options: ${JSON.stringify(options)}`);
+  }
+
   /**
    * Transfer stock from Department to a target Process (Transfer tab).
    * Returns the saved transfer body.
@@ -62,7 +90,7 @@ class InternalTransferPage extends StockInwardBasePage {
     await this.pick('toMasterDataValueID_InternalStockTransferType', 'Process', { exact: true });
     await this.pick('toDepartmentProcessID', toProcess, { search: true });
     if (toSubProcess) await this.pick('toDepartmentSubProcessID', toSubProcess, { search: true }).catch(() => {});
-    await this.pick('masterDataValueID_StockEntityType', stockEntity, { exact: true });
+    await this.pickStockEntity('masterDataValueID_StockEntityType', stockEntity);
     // Department source filters by Transaction Type; Process source filters by
     // Stock Identity Type (Tag Number for Tagwise transfers).
     if (stockIdentity) {
@@ -138,7 +166,7 @@ class InternalTransferPage extends StockInwardBasePage {
       await this.pick('fromDepartmentProcessID', fromProcess, { search: true })
         .catch(() => this.pickByLabel('From Process', fromProcess, { search: true }).catch(() => {}));
     }
-    await this.pick('stockEntityType', stockEntity, { exact: true });
+    await this.pickStockEntity('stockEntityType', stockEntity);
     await this.pick('stockIdentityType', stockIdentity, { exact: true }).catch(() => {});
     await this.waitForIdle();
     await this.page.waitForTimeout(2_500);
