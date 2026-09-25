@@ -26,8 +26,11 @@ const { ENTITIES } = require('./_tag-transfer-suite');
  * From = Locker shows "From Employee" and Stock Identity Type (default
  * "Stock"); Stock Entity Type for metal inward stock is "Material". The
  * Accept form takes Received At = Locker + Employee, Received From = Locker
- * + From Employee. State: e2e-qap-metal-inward-locker-transfer-state.json.
- * MUST run headed.
+ * + From Employee. State: e2e-qap-metal-inward-locker-transfer-state.json;
+ * a transfer+accept step whose transfer already saved resumes at the accept.
+ * Run the WHOLE file in order (one worker): every step reads the previous
+ * step's numbers from the state file - a single test picked in VS Code
+ * fails on its "run TC-MILT-0N first" guard. MUST run headed.
  */
 const state = makeState('e2e-qap-metal-inward-locker-transfer-state.json');
 const KAKKANAD = { bu: 'Kakkanad' };
@@ -66,11 +69,12 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
 
   test(`TC-MILT-02 internal transfer Department -> Locker (${LOCKER_USER_1}) + accept`, async ({ loginPage, internalTransfer, page }) => {
     test.setTimeout(600_000);
-    const { inwardNo } = state.readState();
+    const { inwardNo, lockerTransferNo: done } = state.readState();
     expect(inwardNo, 'run TC-MILT-01 first').toBeTruthy();
     await loginAs(loginPage, page, KAKKANAD);
 
-    const tx = await internalTransfer.transfer({
+    // resume: the transfer already saved on a previous run -> accept only
+    const tx = done ? { data: { receiptNo: done }, resumed: true } : await internalTransfer.transfer({
       issueFrom: 'Department',
       issueTo: 'Locker',
       toEmployee: LOCKER_USER_1,
@@ -78,7 +82,7 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
       transactionType: METAL.transactionType,
       rowText: inwardNo,
     });
-    okSave(tx);
+    if (!tx.resumed) okSave(tx);
     const lockerTransferNo = receiptOf(tx);
     expect(lockerTransferNo, 'department -> locker transfer no').toBeTruthy();
     state.writeState({ lockerTransferNo });
@@ -99,11 +103,11 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
 
   test(`TC-MILT-03 internal transfer Locker -> Locker (${LOCKER_USER_1} -> ${LOCKER_USER_2}) + accept`, async ({ loginPage, internalTransfer, page }) => {
     test.setTimeout(600_000);
-    const { lockerAcceptNo } = state.readState();
+    const { lockerAcceptNo, lockerToLockerNo: done } = state.readState();
     expect(lockerAcceptNo, 'run TC-MILT-02 first').toBeTruthy();
     await loginAs(loginPage, page, KAKKANAD);
 
-    const tx = await internalTransfer.transfer({
+    const tx = done ? { data: { receiptNo: done }, resumed: true } : await internalTransfer.transfer({
       issueFrom: 'Locker',
       fromEmployee: LOCKER_USER_1,
       issueTo: 'Locker',
@@ -112,7 +116,7 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
       stockIdentity: 'Stock',
       rowText: LOCKER_ROW_KEY, // locker grids show article/weight, not the inward no
     });
-    okSave(tx);
+    if (!tx.resumed) okSave(tx);
     const lockerToLockerNo = receiptOf(tx);
     expect(lockerToLockerNo, 'locker -> locker transfer no').toBeTruthy();
     state.writeState({ lockerToLockerNo });
@@ -134,11 +138,11 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
 
   test(`TC-MILT-04 internal transfer Locker (${LOCKER_USER_2}) -> ${LOT_PROCESS} + accept`, async ({ loginPage, internalTransfer, page }) => {
     test.setTimeout(600_000);
-    const { lockerToLockerAcceptNo } = state.readState();
+    const { lockerToLockerAcceptNo, lotTransferNo: done } = state.readState();
     expect(lockerToLockerAcceptNo, 'run TC-MILT-03 first').toBeTruthy();
     await loginAs(loginPage, page, KAKKANAD);
 
-    const tx = await internalTransfer.transfer({
+    const tx = done ? { data: { receiptNo: done }, resumed: true } : await internalTransfer.transfer({
       issueFrom: 'Locker',
       fromEmployee: LOCKER_USER_2,
       issueTo: 'Process',
@@ -147,7 +151,7 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
       stockIdentity: 'Stock',
       rowText: LOCKER_ROW_KEY,
     });
-    okSave(tx);
+    if (!tx.resumed) okSave(tx);
     const lotTransferNo = receiptOf(tx);
     expect(lotTransferNo, 'locker -> process transfer no').toBeTruthy();
     state.writeState({ lotTransferNo });
@@ -203,11 +207,11 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
 
   test(`TC-MILT-07 internal transfer Process (${LOT_PROCESS}) -> Process (${TRANSFER_PROCESS}) by Tag Number + accept`, async ({ loginPage, internalTransfer, page }) => {
     test.setTimeout(600_000);
-    const { tag } = state.readState();
+    const { tag, processTransferNo: done } = state.readState();
     expect(tag, 'run TC-MILT-06 first').toBeTruthy();
     await loginAs(loginPage, page, KAKKANAD);
 
-    const tx = await internalTransfer.transfer({
+    const tx = done ? { data: { receiptNo: done }, resumed: true } : await internalTransfer.transfer({
       issueFrom: 'Process',
       fromProcess: LOT_PROCESS,
       issueTo: 'Process',
@@ -216,7 +220,7 @@ test.describe('Metal Inward -> Locker -> Locker -> Lot process (Kakkanad) [qap]'
       stockIdentity: 'Tag Number',
       tag,
     });
-    okSave(tx);
+    if (!tx.resumed) okSave(tx);
     const processTransferNo = receiptOf(tx);
     expect(processTransferNo, 'process -> process transfer no').toBeTruthy();
     state.writeState({ processTransferNo });

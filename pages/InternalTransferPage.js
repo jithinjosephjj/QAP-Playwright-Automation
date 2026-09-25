@@ -212,6 +212,16 @@ class InternalTransferPage extends StockInwardBasePage {
     await this.pick('stockIdentityType', stockIdentity, { exact: true }).catch(() => {});
     await this.waitForIdle();
     await this.page.waitForTimeout(2_500);
+    // "Transferred Records" loads after the last pick and can take a while
+    // (seen 25-09-2026: the locker->locker accept gave up while its grid
+    // loader was still spinning). Wait for the loader, and if the grid is
+    // still empty re-pick Stock Identity Type once to re-trigger the fetch.
+    await this.waitForTransferredRecords();
+    if (!(await this.gridRows.first().isVisible().catch(() => false)) && !tag) {
+      console.log('acceptTransfer: no transferred records yet - re-triggering the fetch');
+      await this.pick('stockIdentityType', stockIdentity, { exact: true }).catch(() => {});
+      await this.waitForTransferredRecords();
+    }
 
     // Tagwise accept: enter the tag and Search to fetch the pending row
     if (tag) {
@@ -241,6 +251,21 @@ class InternalTransferPage extends StockInwardBasePage {
     await this.page.waitForTimeout(1_000);
 
     return this.commitAndCapture('Accept', 'internal transfer accept');
+  }
+
+  /**
+   * Wait for the Accept form's "Transferred Records" grid fetch to settle:
+   * its inline loader gone and either rows or the "No transferred records
+   * found" placeholder shown (up to 45s), then a short render grace.
+   */
+  async waitForTransferredRecords(timeout = 45_000) {
+    const loader = this.page.locator('.spinner-border, .ngx-spinner-overlay, [class*="spinner"], [class*="loader"]').locator('visible=true');
+    await loader.first().waitFor({ state: 'hidden', timeout }).catch(() => {});
+    await Promise.race([
+      this.gridRows.first().waitFor({ state: 'visible', timeout }),
+      this.page.getByText(/No transferred records found/i).locator('visible=true').first().waitFor({ state: 'visible', timeout }),
+    ]).catch(() => {});
+    await this.page.waitForTimeout(1_000);
   }
 
   /** Click a footer button and capture the save response (throws on silent block). */
