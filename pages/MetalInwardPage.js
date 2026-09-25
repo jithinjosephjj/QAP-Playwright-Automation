@@ -173,7 +173,13 @@ class MetalInwardPage extends StockInwardBasePage {
 
   /** Fill every empty RATE input of the post-Add-Item Pure Rate block. */
   async fillPureRateBlock(rate = this.pendingRate ?? this.defaultPureRate ?? 6000) {
-    if (!(await this.pureRateInputs.first().isVisible({ timeout: 5_000 }).catch(() => false))) return 0;
+    // waitFor, not isVisible: isVisible never waits (its timeout is ignored)
+    // and the block renders a moment after Add Item (missed it 25-09-2026).
+    const shown = await this.pureRateInputs.first()
+      .waitFor({ state: 'visible', timeout: 10_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!shown) return 0;
     let filled = 0;
     const n = await this.pureRateInputs.count();
     for (let i = 0; i < n; i++) {

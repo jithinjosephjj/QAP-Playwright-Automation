@@ -24,7 +24,8 @@
     "test:sales": "playwright test tests/sales",
     "test:load": "playwright test tests/load",
     "report": "playwright show-report",
-    "report:load": "node tests/load/render-html-report.js"
+    "report:load": "node tests/load/render-html-report.js",
+    "test:locker-transfer": "playwright test tests/e2e-qap/metal-inward-locker-transfer-workflow.noauth.spec.js --workers=1"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

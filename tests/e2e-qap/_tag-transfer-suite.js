@@ -40,7 +40,11 @@ async function loginAs(loginPage, page, creds) {
 const METAL_ENTITY = {
   name: 'Metal',
   itemType: 'Metal',
-  stockEntity: 'Metal',
+  // Internal Stock Transfer > Stock Entity Type lists Brand / Metal Stock /
+  // Stone / Material since 24-09-2026; metal inward records go under
+  // "Material" (QA lead, 25-09-2026). Older builds that still say "Metal"
+  // are handled by InternalTransferPage.pickStockEntity.
+  stockEntity: 'Material',
   groupCategory: 'Gold',
   transactionType: 'Metal Inward',
   vendor: 'Celestia Jewels P',

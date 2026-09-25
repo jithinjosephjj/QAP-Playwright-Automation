@@ -9,8 +9,9 @@ const { StockInwardBasePage } = require('./StockInwardBasePage');
  * 2-step wizard (Stock Transfer Details -> Review & Submit):
  *   Issue From (Department | Locker | Process), Issue To (Locker | Process),
  *   To Process (toDepartmentProcessID, e.g. "Lot FVHK"), To Sub Process
- *   (toDepartmentSubProcessID), Stock Entity Type (Metal), Transaction Type
- *   (transactionTypeID, e.g. "Metal Inward") -> a stock grid appears; CHECK the
+ *   (toDepartmentSubProcessID), Stock Entity Type (Material for metal inward
+ *   stock; Brand / Metal Stock / Stone - "Metal" was dropped 24-09-2026),
+ *   Transaction Type (transactionTypeID, e.g. "Metal Inward") -> a stock grid appears; CHECK the
  *   row -> a "<entity> Transfer" dialog opens -> Add -> Next -> Submit.
  * Then the Accept tab: select the pending transfer -> Accept.
  *
@@ -59,37 +60,62 @@ class InternalTransferPage extends StockInwardBasePage {
   }
 
   /**
-   * Stock Entity Type pick. On 24-09-2026 the qap Internal Transfer forms
-   * stopped offering "Metal" and list "Material" instead (QA lead: "select
-   * Material"), so when the requested entity is not an option and Material
-   * is, Material is picked. Brand/Stone still pick their own entry.
+   * Stock Entity Type pick. Since 24-09-2026 the qap Internal Transfer forms
+   * list Brand / Metal Stock / Stone / Material - metal inward records are
+   * transferred as "Material" (QA lead, 25-09-2026), the old "Metal" entry is
+   * gone. The suite asks for Material; older builds that still say Metal get
+   * it through the fallback below, and vice versa. Brand/Stone are unchanged.
    */
   async pickStockEntity(controlname, wanted) {
+    const FALLBACK = { material: 'Metal', metal: 'Material' };
     const options = await this.optionsOf(controlname);
     const exact = (o) => options.some((t) => t.toLowerCase() === String(o).toLowerCase());
     if (exact(wanted)) return this.pick(controlname, wanted, { exact: true });
-    if (exact('Material')) {
-      console.log(`Stock Entity Type: "${wanted}" not offered ${JSON.stringify(options)} - picking "Material"`);
-      return this.pick(controlname, 'Material', { exact: true });
+    const alt = FALLBACK[String(wanted).toLowerCase()];
+    if (alt && exact(alt)) {
+      console.log(`Stock Entity Type: "${wanted}" not offered ${JSON.stringify(options)} - picking "${alt}"`);
+      return this.pick(controlname, alt, { exact: true });
     }
-    throw new Error(`Stock Entity Type "${wanted}" not offered and no "Material" fallback; options: ${JSON.stringify(options)}`);
+    throw new Error(`Stock Entity Type "${wanted}" not offered; options: ${JSON.stringify(options)}`);
   }
 
   /**
    * Transfer stock from Department to a target Process (Transfer tab).
    * Returns the saved transfer body.
    */
-  async transferToProcess({ issueFrom = 'Department', fromProcess, toProcess, toSubProcess, stockEntity = 'Metal', stockIdentity, transactionType = 'Metal Inward', rowText, tag }) {
+  async transferToProcess(opts) {
+    return this.transfer({ ...opts, issueTo: 'Process' });
+  }
+
+  /**
+   * Generic Transfer-tab form (probed 25-09-2026 for the Locker legs):
+   *   Issue From = Department | Locker (+ From Employee -> From Locker auto)
+   *                | Process (+ From Process)
+   *   Issue To   = Locker (+ To Employee -> To Locker auto) | Process (+ To
+   *                Process / Sub Process)
+   *   Stock Entity Type, then Transaction Type (Department source) or Stock
+   *   Identity Type (Locker / Process source; Locker defaults to "Stock").
+   * Employees are the locker holders (e.g. Sioniquser2..5 at Kakkanad).
+   */
+  async transfer({ issueFrom = 'Department', fromEmployee, fromProcess, issueTo = 'Process', toEmployee, toProcess, toSubProcess, stockEntity = 'Metal', stockIdentity, transactionType = 'Metal Inward', rowText, tag }) {
     await this.open();
     await this.openTab('Transfer');
     await this.openAdd();
 
     await this.pick('fromMasterDataValueID_InternalStockTransferType', issueFrom, { exact: true });
-    // Process source (barcoded/lotted stock) reveals a From Process picker
+    // Process source (barcoded/lotted stock) reveals a From Process picker;
+    // Locker source reveals From Employee (From Locker back-fills from it)
     if (issueFrom === 'Process' && fromProcess) await this.pick('fromDepartmentProcessID', fromProcess, { search: true });
-    await this.pick('toMasterDataValueID_InternalStockTransferType', 'Process', { exact: true });
-    await this.pick('toDepartmentProcessID', toProcess, { search: true });
-    if (toSubProcess) await this.pick('toDepartmentSubProcessID', toSubProcess, { search: true }).catch(() => {});
+    if (issueFrom === 'Locker' && fromEmployee) await this.pick('fromEmployeeID', fromEmployee, { exact: true });
+    await this.pick('toMasterDataValueID_InternalStockTransferType', issueTo, { exact: true });
+    if (issueTo === 'Locker') {
+      await this.pick('toEmployeeID', toEmployee, { exact: true });
+      const toLocker = await this.inputByLabel('To Locker').inputValue().catch(() => '');
+      console.log(`internal transfer: To Employee ${toEmployee} -> To Locker "${toLocker}"`);
+    } else {
+      await this.pick('toDepartmentProcessID', toProcess, { search: true });
+      if (toSubProcess) await this.pick('toDepartmentSubProcessID', toSubProcess, { search: true }).catch(() => {});
+    }
     await this.pickStockEntity('masterDataValueID_StockEntityType', stockEntity);
     // Department source filters by Transaction Type; Process source filters by
     // Stock Identity Type (Tag Number for Tagwise transfers).
@@ -127,9 +153,18 @@ class InternalTransferPage extends StockInwardBasePage {
     // match the raw identifier (keeps a tag's slashes, e.g. 26/01/0100010) or
     // its punctuation-stripped core (doc numbers like MMM24)
     const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const row = rowText
+    let row = rowText
       ? this.gridRows.filter({ hasText: new RegExp(`${esc(rowText)}|${esc(this.core(rowText))}`, 'i') }).first()
       : this.gridRows.filter({ has: this.page.getByRole('checkbox') }).first();
+    if (rowText && !(await row.isVisible().catch(() => false))) {
+      // locker grids key stock differently than the inward no - after a
+      // grace period fall back to the first selectable row (logged)
+      const found = await row.waitFor({ state: 'visible', timeout: 15_000 }).then(() => true).catch(() => false);
+      if (!found) {
+        row = this.gridRows.filter({ has: this.page.getByRole('checkbox') }).first();
+        console.log(`internal transfer: no row matches "${rowText}" - taking the first selectable row: ${((await row.innerText().catch(() => '')) || '').replace(/\s+/g, ' ').slice(0, 120)}`);
+      }
+    }
     await row.waitFor({ state: 'visible', timeout: 30_000 });
     const box = row.getByRole('checkbox').first();
     if (!(await box.isChecked().catch(() => false))) await box.check({ force: true });
@@ -152,19 +187,26 @@ class InternalTransferPage extends StockInwardBasePage {
    * pending transfers appears; select the row (by rowText, else first) -> the
    * footer "Accept" button.
    */
-  async acceptTransfer({ toProcess, toSubProcess, receivedAt = 'Process', receivedFrom = 'Department', fromProcess, stockEntity = 'Metal', stockIdentity = 'Stock', rowText, tag } = {}) {
+  async acceptTransfer({ toProcess, toSubProcess, receivedAt = 'Process', employee, receivedFrom = 'Department', fromProcess, fromEmployee, stockEntity = 'Metal', stockIdentity = 'Stock', rowText, tag } = {}) {
     await this.open();
     await this.openTab('Accept');
     await this.openAdd('receivedAt');
 
     await this.pick('receivedAt', receivedAt, { exact: true });
+    // Received At = Locker: Employee (locker holder) -> Locker back-fills
+    if (receivedAt === 'Locker' && employee) await this.pick('employeeID', employee, { exact: true });
     if (toProcess) await this.pick('departmentProcessID', toProcess, { search: true });
     if (toSubProcess) await this.pick('departmentSubProcessID', toSubProcess, { search: true }).catch(() => {});
     await this.pick('receivedFrom', receivedFrom, { exact: true });
-    // Received From = Process reveals a From Process picker
+    // Received From = Process reveals a From Process picker; = Locker a From
+    // Employee picker (its list may load late - tolerated, the grid falls back)
     if (receivedFrom === 'Process' && fromProcess) {
       await this.pick('fromDepartmentProcessID', fromProcess, { search: true })
         .catch(() => this.pickByLabel('From Process', fromProcess, { search: true }).catch(() => {}));
+    }
+    if (receivedFrom === 'Locker' && fromEmployee) {
+      await this.pick('fromEmployeeID', fromEmployee, { exact: true })
+        .catch((e) => console.log(`accept: From Employee "${fromEmployee}" not picked - ${e.message.split(/\r?\n/)[0]}`));
     }
     await this.pickStockEntity('stockEntityType', stockEntity);
     await this.pick('stockIdentityType', stockIdentity, { exact: true }).catch(() => {});
