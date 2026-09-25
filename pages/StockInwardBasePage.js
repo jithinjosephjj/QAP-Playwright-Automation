@@ -353,11 +353,23 @@ class StockInwardBasePage extends BasePage {
     await btn.scrollIntoViewIfNeeded();
     await btn.click();
     // dialog title differs per screen: "Upload Files" / "Upload Documents" / "Upload Images"
-    const dlg = this.page
+    let dlg = this.page
       .locator('[role="dialog"], .modal, ngb-modal-window, .offcanvas')
       .filter({ hasText: /Upload (Files?|Documents?|Images?)/i })
       .last();
-    await dlg.waitFor({ state: 'visible', timeout: 15_000 });
+    const modal = await dlg.waitFor({ state: 'visible', timeout: 6_000 }).then(() => true).catch(() => false);
+    if (!modal) {
+      // Stock Inward > Stone (qap, 25-09-2026) opens the Upload Files panel as
+      // a plain side drawer (no dialog role / modal class): take the nearest
+      // container of the "Upload ..." heading that holds the file input.
+      // the whole drawer = the heading's nearest ancestor that also holds the
+      // footer Close button. NOT keyed on the file input: the drawer swaps it
+      // for a preview once a file is chosen, which would orphan the locator.
+      dlg = this.page
+        .locator('xpath=//*[self::h4 or self::h5 or self::h6][contains(normalize-space(.), "Upload")]/ancestor::div[.//button[contains(normalize-space(.), "Close")]][1]')
+        .last();
+      await dlg.waitFor({ state: 'visible', timeout: 10_000 });
+    }
 
     await dlg.locator('input[type="file"]').first().setInputFiles(filePath);
     await this.page.waitForTimeout(1_500);
@@ -369,7 +381,14 @@ class StockInwardBasePage extends BasePage {
     await this.page.waitForTimeout(1_500);
     const uploaded = await dlg.locator('img, .uploaded, li, tr').filter({ hasNotText: /No images available/i }).count().catch(() => 0);
 
-    await dlg.getByRole('button', { name: 'Close' }).last().click();
+    // the qap Stone drawer commits its uploaded list with a footer "Save"
+    const save = dlg.getByRole('button', { name: /^\s*Save\s*$/i }).last();
+    if (await save.isVisible().catch(() => false)) {
+      await save.click().catch(() => {});
+      await this.page.waitForTimeout(1_500);
+    }
+    const close = dlg.getByRole('button', { name: 'Close' }).last();
+    if (await close.isVisible().catch(() => false)) await close.click().catch(() => {});
     await dlg.waitFor({ state: 'hidden', timeout: 15_000 }).catch(() => {});
     console.log(`Add Files: image attached (${filePath.split(/[\\/]/).pop()}) and dialog closed${uploaded ? '' : ' - NOTE: dialog listed no uploaded file'}`);
   }

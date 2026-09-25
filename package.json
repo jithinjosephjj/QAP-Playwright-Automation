@@ -25,7 +25,9 @@
     "test:load": "playwright test tests/load",
     "report": "playwright show-report",
     "report:load": "node tests/load/render-html-report.js",
-    "test:locker-transfer": "playwright test tests/e2e-qap/metal-inward-locker-transfer-workflow.noauth.spec.js --workers=1"
+    "test:locker-transfer": "playwright test tests/e2e-qap/metal-inward-locker-transfer-workflow.noauth.spec.js --workers=1",
+    "test:locker-transfer:stone": "playwright test tests/e2e-qap/stone-inward-locker-transfer-workflow.noauth.spec.js --workers=1",
+    "test:locker-transfer:brand": "playwright test tests/e2e-qap/brand-inward-locker-transfer-workflow.noauth.spec.js --workers=1"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

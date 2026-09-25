@@ -41,15 +41,21 @@ Run the whole loop with
 `SIONIQ_CLIENT=qap npx playwright test tests/e2e-qap/ho-ho-tag-transfer-workflow.noauth.spec.js tests/e2e-qap/ho-branch-tag-transfer-workflow.noauth.spec.js tests/e2e-qap/branch-branch-tag-transfer-workflow.noauth.spec.js tests/e2e-qap/branch-ho-tag-transfer-workflow.noauth.spec.js --workers=1`.
 The Brand and Stone variants still seed their own tags (per-entity state files).
 
-## Metal inward -> Locker -> Locker -> Lot process (QA lead, 25-09-2026)
+## Inward -> Locker -> Locker -> Lot process -> tag -> Transfer process (QA lead, 25-09-2026)
 
-`metal-inward-locker-transfer-workflow` (TC-MILT-01..07, state
-`e2e-qap-metal-inward-locker-transfer-state.json`), all at Kakkanad through
-Internal Stock Transfer + Accept:
+Shared builder `_locker-transfer-suite.js`, one spec per entity, all at
+Kakkanad through Internal Stock Transfer + Accept:
+
+| Entity | Spec | TCs | State file | npm |
+|---|---|---|---|---|
+| Metal (Tendulkar, gross 100, entity Material) | `metal-inward-locker-transfer-workflow` | TC-MILT-01..07 | `e2e-qap-metal-inward-locker-transfer-state.json` | `npm run test:locker-transfer` |
+| Stone (DND-Drop, 25g assorted, entity Stone) | `stone-inward-locker-transfer-workflow` | TC-SILT-01..07 | `e2e-qap-stone-inward-locker-transfer-state.json` | `npm run test:locker-transfer:stone` |
+| Brand (SIO Brand Tendulkar, 25g, MRP, entity Brand) | `brand-inward-locker-transfer-workflow` | TC-BILT-01..07 (03 blocked: app bug, see spec) | `e2e-qap-brand-inward-locker-transfer-state.json` | `npm run test:locker-transfer:brand` |
+
 
 | Step | Transfer | Accept |
 |---|---|---|
-| 01 | Metal Inward, gross weight 100 (Celestia Jewels P, Tendulkar) | - |
+| 01 | Inward (Metal: Tendulkar gross 100 / Stone: DND-Drop 25g / Brand: SIO Brand Tendulkar 25g), vendor Celestia Jewels P | - |
 | 02 | Department -> Locker, To Employee Sioniquser2 (To Locker auto-fills) | Received At Locker / Employee Sioniquser2, From Department |
 | 03 | Locker -> Locker, Sioniquser2 -> Sioniquser3 | Received At Locker / Employee Sioniquser3, From Locker / Sioniquser2 |
 | 04 | Locker (Sioniquser3) -> Process "Lot FVHK" | Received At Process "Lot FVHK", From Locker / Sioniquser3 |
@@ -58,6 +64,7 @@ Internal Stock Transfer + Accept:
 | 07 | Process "Lot FVHK" -> Process "Transfer FVHK", Stock Identity Type "Tag Number" | Received At Process "Transfer FVHK", From Process "Lot FVHK", tagwise |
 
 Stock Entity Type for metal inward stock is **Material** (the list reads Alloy /
-Brand / Metal Stock / Stone / Material since 24-09-2026). Locker stock grids
-show article + weight but no inward number, so the locker legs pick the row by
-the article code `G-CB-NK-Tendulkar`. Run: `npm run test:locker-transfer`.
+Brand / Metal Stock / Stone / Material since 24-09-2026); stone stock is **Stone**.
+Locker stock grids show article + weight but no inward number, so the locker legs
+pick the row by the article code (`G-CB-NK-Tendulkar` / `DND-Drop` / `Tendulkar`). A transfer
+whose save already landed resumes at its accept on re-run.
